@@ -37,7 +37,7 @@ else
             <MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
             <MudTd>
                 <MudButton Color="Color.Primary" Variant="Variant.Outlined"
-                           OnClick="() => NavigateToUpsertForm(context.Id)">تعديل</MudButton>
+                           OnClick="() => NavigateToUpsertForm(context)">تعديل</MudButton>
 
                 <MudButton Color="Color.Secondary" Variant="Variant.Outlined"
                            OnClick="()=> DeleteFacultyMember(context)">حذف</MudButton>
@@ -64,9 +64,13 @@ else
         NavigationManager.NavigateTo($"/FacultyMemberComponents/EditFacultyMember");
     }
 
-    private void NavigateToUpsertForm(Guid id)
+    private void NavigateToUpsertForm(object context)
     {
-        NavigationManager.NavigateTo($"/FacultyMemberComponents/EditFacultyMember/{id}");
+        if (context is FacultyMemberDto facultyMemberDto)
+        {
+            NavigationManager.NavigateTo($"/FacultyMemberComponents/EditFacultyMember/{facultyMemberDto.Id}");
+        }
+       
     }
 
     private async void EditFacultyMember(FacultyMemberDto facultyMemberDto)

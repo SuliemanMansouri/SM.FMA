@@ -20,29 +20,29 @@ else
                 <MudText Typo="Typo.h6">@PageHeaderText</MudText>
             </MudCardHeader>
             <MudTextField T="string"
-                          Label="Name"
-                          @bind-Value="facultyMember.Name"
-                          Required="true"
-                          RequiredError="Name is required" />
+            Label="Name"
+            @bind-Value="facultyMember.Name"
+            Required="true"
+            RequiredError="Name is required" />
 
             <MudTextField T="string"
-                          Label="Email"
-                          @bind-Value="facultyMember.Email"
-                          Required="true"
-                          RequiredError="Email is required" />
+            Label="Email"
+            @bind-Value="facultyMember.Email"
+            Required="true"
+            RequiredError="Email is required" />
 
             <MudTextField T="string"
-                          Label="Phone Number"
-                          @bind-Value="facultyMember.PhoneNumber" />
+            Label="Phone Number"
+            @bind-Value="facultyMember.PhoneNumber" />
             <MudCardActions Class="d-flex justify-end mt-2">
                 <MudButton Variant="Variant.Outlined"
-                           Color="Color.Primary"
-                           OnClick="HandleSaveAsync">Save</MudButton>
+                Color="Color.Primary"
+                OnClick="HandleSaveAsync">Save</MudButton>
                 <MudButton Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           OnClick="HandleSaveAndCloseAsync">Save and Close</MudButton>
+                Color="Color.Primary"
+                OnClick="HandleSaveAndCloseAsync">Save and Close</MudButton>
             </MudCardActions>
-           
+
         </MudCard>
     </MudForm>
 
@@ -54,13 +54,13 @@ else
     protected bool success = false;
     protected MudForm? form;
 
-    [Parameter] public string Id { get; set; }
+    [Parameter] public string Id { get; set; } = string.Empty;
     private FacultyMemberDto facultyMember { get; set; }
     private string PageHeaderText = "Add Faculty Member";
 
-    protected async override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        if (Id == null)
+        if (string.IsNullOrEmpty(Id))
         {
             facultyMember = new FacultyMemberDto();
             PageHeaderText = "≈÷«›… ⁄÷Ê ÂÌ∆…  œ—Ì”";
@@ -72,7 +72,6 @@ else
 
         }
     }
-
 
     protected async Task HandleSaveAsync()
     {

@@ -1,0 +1,90 @@
+﻿@page "/facultyMembers"
+@inject IFacultyMemberService TeacherService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@rendermode InteractiveServer
+
+<h3>أعضاء هيئة التدريس</h3>
+
+
+@if (teachers == null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <MudTable Items="teachers" Hover="true" SortLabel="Sort By" Elevation="0" AllowUnsorted="false">
+        <ToolBarContent>
+            <MudSpacer />
+            <MudButton Color="Color.Primary"
+                       Variant="Variant.Outlined"
+                       Size="Size.Medium"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="() => NavigateToUpsertForm()">إضافة</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<FacultyMemberDto, object>(x=>x.Id)">رقم</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.Name)">إسم</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.Email)">بريد إلكتروني</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.PhoneNumber)">رقم الهاتف</MudTableSortLabel></MudTh>
+            <MudTh>العمليات</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd DataLabel="رقم">@context.Id</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+            <MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
+            <MudTd>
+                <MudButton Color="Color.Primary" Variant="Variant.Outlined"
+                           OnClick="() => NavigateToUpsertForm(context.Id)">تعديل</MudButton>
+
+                <MudButton Color="Color.Secondary" Variant="Variant.Outlined"
+                           OnClick="()=> DeleteFacultyMember(context)">حذف</MudButton>
+            </MudTd>
+        </RowTemplate>
+
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        </PagerContent>
+    </MudTable>
+}
+
+@code {
+
+    private FacultyMemberDto[]? teachers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        teachers = (await TeacherService.GetFacultyMembersAsync()).ToArray();
+    }
+
+    private void NavigateToUpsertForm()
+    {
+        NavigationManager.NavigateTo($"/FacultyMemberComponents/EditFacultyMember");
+    }
+
+    private void NavigateToUpsertForm(Guid id)
+    {
+        NavigationManager.NavigateTo($"/FacultyMemberComponents/EditFacultyMember/{id}");
+    }
+
+    private async void EditFacultyMember(FacultyMemberDto facultyMemberDto)
+    {
+
+        teachers = (await TeacherService.GetFacultyMembersAsync()).ToArray();
+
+    }
+
+    private async Task DeleteFacultyMember(FacultyMemberDto facultyMemberDto)
+    {
+
+        await TeacherService.DeleteFacultyMemberAsync(facultyMemberDto.Id);
+        teachers = (await TeacherService.GetFacultyMembersAsync()).ToArray();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add("تم حذف العضو", Severity.Success);
+
+
+    }
+}
+

@@ -1,0 +1,94 @@
+@page "/FacultyMemberComponents/EditFacultyMember"
+@page "/FacultyMemberComponents/EditFacultyMember/{Id:Guid}"
+@inject IFacultyMemberService FacultyMemberService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@rendermode InteractiveServer
+
+
+@if (facultyMember == null)
+{
+    <div class="d-flex justify-center align-center ma-auto">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <MudForm Model="@facultyMember" @ref="form">
+        <MudCard Outlined="true">
+            <MudCardHeader>
+                <MudText Typo="Typo.h6">@PageHeaderText</MudText>
+            </MudCardHeader>
+            <MudTextField T="string"
+                          Label="Name"
+                          @bind-Value="facultyMember.Name"
+                          Required="true"
+                          RequiredError="Name is required" />
+
+            <MudTextField T="string"
+                          Label="Email"
+                          @bind-Value="facultyMember.Email"
+                          Required="true"
+                          RequiredError="Email is required" />
+
+            <MudTextField T="string"
+                          Label="Phone Number"
+                          @bind-Value="facultyMember.PhoneNumber" />
+            <MudCardActions Class="d-flex justify-end mt-2">
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           OnClick="HandleSaveAsync">Save</MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           OnClick="HandleSaveAndCloseAsync">Save and Close</MudButton>
+            </MudCardActions>
+           
+        </MudCard>
+    </MudForm>
+
+
+}
+
+
+@code {
+    protected bool success = false;
+    protected MudForm? form;
+
+    [Parameter] public string Id { get; set; }
+    private FacultyMemberDto facultyMember { get; set; }
+    private string PageHeaderText = "Add Faculty Member";
+
+    protected async override void OnInitialized()
+    {
+        if (Id == null)
+        {
+            facultyMember = new FacultyMemberDto();
+            PageHeaderText = "≈÷«›… ⁄÷Ê ÂÌ∆…  œ—Ì”";
+        }
+        else
+        {
+            PageHeaderText = " ⁄œÌ· ⁄÷Ê ÂÌ∆…  œ—Ì”";
+            facultyMember = await FacultyMemberService.GetFacultyMemberAsync(Guid.Parse(Id));
+
+        }
+    }
+
+
+    protected async Task HandleSaveAsync()
+    {
+
+
+        await FacultyMemberService.UpsertFacultyMemberAsync(facultyMember);
+        Snackbar.Add(" „ Õ›Ÿ «·»Ì«‰« ", Severity.Success);
+    }
+
+
+    protected async Task HandleSaveAndCloseAsync()
+    {
+
+        await FacultyMemberService.UpsertFacultyMemberAsync(facultyMember);
+        NavigationManager.NavigateTo($"/facultyMembers", true);
+
+
+    }
+} 

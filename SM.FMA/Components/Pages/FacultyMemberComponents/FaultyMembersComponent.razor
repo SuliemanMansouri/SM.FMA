@@ -2,7 +2,9 @@
 @inject IFacultyMemberService TeacherService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @rendermode InteractiveServer
+@using Dialogs
 
 <h3>أعضاء هيئة التدريس</h3>
 
@@ -70,7 +72,7 @@ else
         {
             NavigationManager.NavigateTo($"/FacultyMemberComponents/EditFacultyMember/{facultyMemberDto.Id}");
         }
-       
+
     }
 
     private async void EditFacultyMember(FacultyMemberDto facultyMemberDto)
@@ -82,11 +84,22 @@ else
 
     private async Task DeleteFacultyMember(FacultyMemberDto facultyMemberDto)
     {
+        var parameters = new DialogParameters
+        {
+            { "ContentText", "هل تريد حذف العضو؟" },
+            { "ButtonText", "حذف" },
+            { "Color", Color.Error }
+        };
 
-        await TeacherService.DeleteFacultyMemberAsync(facultyMemberDto.Id);
-        teachers = (await TeacherService.GetFacultyMembersAsync()).ToArray();
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add("تم حذف العضو", Severity.Success);
+        var _backDropClick = new DialogOptions() { MaxWidth = MaxWidth.Medium, BackdropClick = false };
+        var result = await DialogService.Show<ConfirmDelete>("حذف", parameters, _backDropClick).Result;
+        if (!result.Canceled)
+        {
+            await TeacherService.DeleteFacultyMemberAsync(facultyMemberDto.Id);
+            teachers = (await TeacherService.GetFacultyMembersAsync()).ToArray();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add("تم حذف العضو", Severity.Success);
+        }
 
 
     }

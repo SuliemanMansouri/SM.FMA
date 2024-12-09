@@ -55,7 +55,7 @@ else
     protected MudForm? form;
 
     [Parameter] public string Id { get; set; } = string.Empty;
-    private FacultyMemberDto facultyMember { get; set; }
+    private FacultyMemberDto? facultyMember { get; set; }
     private string PageHeaderText = "Add Faculty Member";
 
     protected override async Task OnInitializedAsync()

@@ -11,7 +11,9 @@
 
 @if (teachers == null)
 {
-    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    <div class="d-flex justify-center align-center ma-auto">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    </div>
 }
 else
 {
@@ -19,7 +21,7 @@ else
         <ToolBarContent>
             <MudSpacer />
             <MudButton Color="Color.Primary"
-                       Variant="Variant.Outlined"
+                       Variant="Variant.Filled"
                        Size="Size.Medium"
                        StartIcon="@Icons.Material.Filled.Add"
                        OnClick="() => NavigateToUpsertForm()">إضافة</MudButton>
@@ -36,7 +38,7 @@ else
             <MudTd DataLabel="رقم">@context.Id</MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Email">@context.Email</MudTd>
-            <MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
+            <MudTd DataLabel="Phone Number" Style="direction:ltr">@context.PhoneNumber</MudTd>
             <MudTd>
                 <MudButton Color="Color.Primary" Variant="Variant.Outlined"
                            OnClick="() => NavigateToUpsertForm(context)">تعديل</MudButton>
@@ -86,19 +88,22 @@ else
     {
         var parameters = new DialogParameters
         {
-            { "ContentText", "هل تريد حذف العضو؟" },
-            { "ButtonText", "حذف" },
+            { "ContentText", "هل أنت متأكد من عملية الحذف؟" },
+            { "ConfirmationText", "حذف" },
+            { "CancelText", "إلغاء" },
             { "Color", Color.Error }
         };
 
-        var _backDropClick = new DialogOptions() { MaxWidth = MaxWidth.Medium, BackdropClick = false };
-        var result = await DialogService.Show<ConfirmDelete>("حذف", parameters, _backDropClick).Result;
+        var _dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
+
+        var msg = $"سيتم حذف عضو هيئة التدريس: {facultyMemberDto.Name}";
+        var result = await DialogService.Show<ConfirmDelete>(msg, parameters, _dialogOptions).Result;
         if (!result.Canceled)
         {
             await TeacherService.DeleteFacultyMemberAsync(facultyMemberDto.Id);
             teachers = (await TeacherService.GetFacultyMembersAsync()).ToArray();
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-            Snackbar.Add("تم حذف العضو", Severity.Success);
+            Snackbar.Add("تم الحذف بنجاح ", Severity.Success);
         }
 
 

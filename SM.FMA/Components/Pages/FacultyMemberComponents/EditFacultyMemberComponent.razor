@@ -14,6 +14,7 @@
 }
 else
 {
+
     <MudForm Model="@facultyMember" @ref="form">
         <MudCard Elevation="6">
             <MudCardHeader>
@@ -53,7 +54,6 @@ else
                     </MudItem>
 
                 </MudGrid>
-
             </MudCardContent>
 
             <MudCardActions Class="d-flex justify-end mt-2">
@@ -65,9 +65,22 @@ else
                            OnClick="HandleSaveAndCloseAsync">Õ›Ÿ Ê ≈€·«ﬁ</MudButton>
             </MudCardActions>
 
+            <CascadingValue Value="facultyMember.Id" Name="FacultyMemberId">
+                <MudTabs Elevation="4" Rounded="true" Centered="true">
+                    <MudTabPanel Text="«·‘Â«œ« ">                    </MudTabPanel>
+                    <MudTabPanel Text="„‰‘Ê—« ">
+                        <SM.FMA.Components.Pages.PublicationComponents.PublicationsComponent />
+                    </MudTabPanel>
+                    <MudTabPanel Text="«·„‰«’»"></MudTabPanel>
+                    <MudTabPanel Text="«·œ—Ã«  «·⁄·„Ì…"></MudTabPanel>
+                    <MudTabPanel Text="«·œ—Ã«  «·ÊŸÌ›Ì…"></MudTabPanel>
+                </MudTabs>
+
+            </CascadingValue>
+
+
         </MudCard>
     </MudForm>
-
 
 }
 
@@ -77,6 +90,7 @@ else
     protected MudForm? form;
 
     [Parameter] public string Id { get; set; } = string.Empty;
+
     private FacultyMemberDto? facultyMember { get; set; }
     private string PageHeaderText = "Add Faculty Member";
 

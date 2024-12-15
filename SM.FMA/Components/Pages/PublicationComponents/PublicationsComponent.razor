@@ -1,0 +1,121 @@
+﻿@page "/PublicationsComponent"
+@using MudBlazor
+@using SM.FMA.Components.Pages.Dialogs
+@using SM.FMA.Components.Pages.PublicationComponents
+@using SM.FMA.Data.Enums
+@using SM.FMA.Extensions
+@inject IPublicationService PublicationService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+@if (publications == null)
+{
+    <div class="d-flex justify-center align-center ma-auto">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <MudTable Items="publications" Hover="true" @bind-SelectedItem="selectedPublication" Dense="true">
+        <ToolBarContent>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddDialog">جديد</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<PublicationDto, object>(x=> x.DatePublished)">تاريخ النشر</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x=>x.Title)">العنوان</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x=>x.Publisher)">الناشر</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x=>x.PublishingType)">نوع المنشور</MudTableSortLabel></MudTh>
+            <MudTh>العمليات</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="تاريخ النشر">@context.DatePublished?.ToString("yyyy-MM-dd")</MudTd>
+            <MudTd DataLabel="العنوان">@context.Title</MudTd>
+            <MudTd DataLabel="الناشر">@context.Publisher</MudTd>
+            <MudTd DataLabel="نوع المنشور">@context.PublishingType</MudTd>
+            <MudTd DataLabel="العمليات">
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => OpenEditDialog(context)">تعديل</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => DeletePublication(context)">حذف</MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+}
+
+
+
+@code {
+    [CascadingParameter(Name = "FacultyMemberId")] public Guid FacultyMemberId { get; set; }
+    private List<PublicationDto> publications = new();
+    private PublicationDto selectedPublication = new();
+    private bool isDialogVisible = false;
+    private MudForm form;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPublications();
+    }
+
+    private async Task LoadPublications()
+    {
+        publications = (await PublicationService.GetFacultyMemeberPublicationsAsync(FacultyMemberId)).ToList();
+    }
+
+    private void OpenAddDialog()
+    {
+        var parameters = new DialogParameters
+            {
+                ["PublicationId"] = null,
+                ["FacultyMemberId"] = FacultyMemberId,
+                ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
+            };
+        selectedPublication = new PublicationDto { FacultyMemberId = FacultyMemberId };
+        DialogService.Show<EditPublication>("َإضافة منشور", 
+        parameters, 
+        new DialogOptions { MaxWidth = MaxWidth.Small });
+    }
+
+    private void OpenEditDialog(PublicationDto publication)
+    {
+        selectedPublication = publication;
+        var parameters = new DialogParameters
+            {
+                ["PublicationId"] = publication.Id,
+                ["FacultyMemberId"] = publication.FacultyMemberId,
+                ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
+            };
+
+        DialogService.Show<EditPublication>("تعديل منشور",
+        parameters,
+        new DialogOptions { MaxWidth = MaxWidth.Small });
+    }
+
+    private async Task OnDialogSave()
+    {
+        await LoadPublications();
+    }
+
+
+
+    private async Task DeletePublication(PublicationDto publicationDto)
+    {
+        var parameters = new DialogParameters
+        {
+            { "ContentText", "هل أنت متأكد من عملية الحذف؟" },
+            { "ConfirmationText", "حذف" },
+            { "CancelText", "إلغاء" },
+            { "Color", Color.Error }
+        };
+
+        var _dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
+
+        var msg = $"سيتم حذف المنشور: {publicationDto.Title}";
+        var result = await DialogService.Show<ConfirmDelete>(msg, parameters, _dialogOptions).Result;
+        if (!result.Canceled)
+        {
+            await PublicationService.DeletePublicationAsync(publicationDto.Id);
+            Snackbar.Add("Publication deleted successfully", Severity.Success);
+            await LoadPublications();
+        }
+    }
+}

@@ -1,0 +1,114 @@
+﻿@inject IPublicationService PublicationService
+@inject ISnackbar Snackbar
+@using FMA.Data.Enums
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
+
+
+@if (PublicationDto == null)
+{
+    <div class="d-flex justify-center alighn-center ma-auto">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <MudDialog>
+        <DialogContent>
+            <MudForm Model="@PublicationDto">
+                <MudCard>
+                    <MudCardContent>
+                        <MudGrid >
+                            <MudItem lg="12" md="12" xs="12">
+                                <MudTextField T="string" 
+                                    Label="العنوان" 
+                                    @bind-Value="PublicationDto.Title" 
+                                    Required="true" 
+                                    Lines="4" 
+                                    Margin="Margin.Dense" 
+                                    Variant="Variant.Outlined"/>
+                            </MudItem>
+                            <MudItem lg="6" md="12" xs="12">
+                                <MudTextField T="string" Label="الناشر" @bind-Value="PublicationDto.Publisher" Required="true" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem lg="6" md="6" xs="12">
+                                <MudDatePicker Label="تاريخ النشر" @bind-Date="PublicationDto.DatePublished" Required="true" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem lg="6" md="6" xs="12">
+                                <MudSelect T="PublicationType" Label="نوع المنشور" @bind-Value="PublicationDto.PublishingType" Required="true" Margin="Margin.Dense" Variant="Variant.Outlined">
+                                    @foreach (var item in GetEnumDisplayNames<PublicationType>())
+                                    {
+                                        <MudSelectItem Value="@(item.Key)">@item.Value</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem lg="12" md="12" xs="12">
+                                <MudTextField T="string" Label="المؤلفون المشاركون" @bind-Value="PublicationDto.CoAuthors" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                            </MudItem>
+                        </MudGrid>
+
+                    </MudCardContent>
+
+                    <MudCardActions>
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SavePublication">حفظ</MudButton>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel">تراجع</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudForm>
+        </DialogContent>
+    </MudDialog>
+}
+
+@code {
+
+    protected bool success = false;
+    protected MudForm? form;
+
+    [Parameter] public Guid FacultyMemberId { get; set; }
+    [Parameter] public Guid PublicationId { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    private PublicationDto? PublicationDto { get; set; }
+   
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (PublicationId == Guid.Empty)
+        {
+            PublicationDto = new PublicationDto();
+            PublicationDto.FacultyMemberId = FacultyMemberId;
+        }
+        else
+        {
+            PublicationDto = await PublicationService.GetPublicationByIdAsync(PublicationId);
+        }
+    }
+
+    private async Task SavePublication()
+    {
+
+        await PublicationService.UpsertPublicationAsync(PublicationDto);
+        await OnSave.InvokeAsync();
+        MudDialog.Close(DialogResult.Ok(true));
+
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private Dictionary<PublicationType, string> GetEnumDisplayNames<T>() where T : Enum
+    {
+        return Enum.GetValues(typeof(T))
+            .Cast<T>()
+            .ToDictionary(
+                e => (PublicationType)(object)e,
+                e => e.GetType()
+                      .GetField(e.ToString())
+                      .GetCustomAttribute<DisplayAttribute>()?.GetName() ?? e.ToString());
+    }
+}

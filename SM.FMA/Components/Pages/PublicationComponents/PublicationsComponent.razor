@@ -48,7 +48,7 @@ else
     [CascadingParameter(Name = "FacultyMemberId")] public Guid FacultyMemberId { get; set; }
     private List<PublicationDto> publications = new();
     private PublicationDto selectedPublication = new();
-    private bool isDialogVisible = false;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadPublications();

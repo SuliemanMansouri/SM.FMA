@@ -7,6 +7,7 @@ using SM.FMA.Components.Account;
 using SM.FMA.Components.Pages.FacultyMemberComponents;
 using SM.FMA.Components.Pages.PublicationComponents;
 using SM.FMA.Data;
+using SM.FMA.Components.Pages.CertificateComponents;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +54,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 builder.Services.AddScoped<IFacultyMemberService, FacultyMemberService>();
 builder.Services.AddScoped<IPublicationService, PublicationService>();
+builder.Services.AddScoped<ICertificateService, CertificateService>();
 
 
 var app = builder.Build();

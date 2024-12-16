@@ -1,0 +1,108 @@
+@inject ICertificateService CertificateService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">الشهادات</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        @if (certificates == null)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        }
+        else
+        {
+            <MudTable Items="@certificates" Hover="true" Breakpoint="Breakpoint.Sm">
+                <ToolBarContent>
+                    <MudSpacer />
+                    <MudButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" Variant="Variant.Filled" OnClick="AddCertificate">إضافة</MudButton>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>الدرجة العلمية</MudTh>
+                    <MudTh>المؤسسة المانحة</MudTh>
+                    <MudTh>تاريخ المنح</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="الدرجة العلمية">@context.Degree</MudTd>
+                    <MudTd DataLabel="المؤسسة المانحة">@context.Institution</MudTd>
+                    <MudTd DataLabel="تاريخ المنح">@context.DateAwarded.ToString("dd/MM/yyyy")</MudTd>
+                    <MudTd>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="@(() => EditCertificate(context.Id))" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" OnClick="@(() => DeleteCertificate(context.Id))" />
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+    </MudCardContent>
+</MudCard>
+
+@code
+{
+    [Parameter] public Guid FacultyMemberId { get; set; }
+    private List<CertificateDto>? certificates;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCertificates();
+    }
+
+    private async Task LoadCertificates()
+    {
+        certificates = await CertificateService.GetCertificatesAsync(FacultyMemberId);
+    }
+
+    private async Task AddCertificate()
+    {
+        var parameters = new DialogParameters
+        {
+            { nameof(CertificateDto.FacultyMemberId), FacultyMemberId }
+        };
+
+        var dialog = await DialogService.ShowAsync<EditCertificate>("إضافة شهادة", parameters);
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled)
+        {
+            await LoadCertificates();
+        }
+    }
+
+    private async Task EditCertificate(Guid id)
+    {
+        var parameters = new DialogParameters
+        {
+            { nameof(CertificateDto.FacultyMemberId), FacultyMemberId },
+            { nameof(CertificateDto.Id), id }
+        };
+
+        var dialog = await DialogService.ShowAsync<EditCertificate>("تعديل الشهادة", parameters);
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled)
+        {
+            await LoadCertificates();
+        }
+    }
+
+    private async Task DeleteCertificate(Guid id)
+    {
+        var result = await DialogService.ShowMessageBox(
+            "حذف الشهادة",
+            "هل أنت متأكد من حذف هذه الشهادة؟",
+            yesText: "حذف",
+            cancelText: "إلغاء"
+        );
+
+        if (result == true)
+        {
+            await CertificateService.DeleteCertificateAsync(id);
+            await LoadCertificates();
+            Snackbar.Add("تم حذف الشهادة بنجاح", Severity.Success);
+        }
+    }
+} 

@@ -1,0 +1,104 @@
+@inject ICertificateService CertificateService
+@inject ISnackbar Snackbar
+@using SM.FMA.Extensions
+
+@if (CertificateDto == null)
+{
+    <div class="d-flex justify-center align-center ma-auto">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <MudDialog>
+        <DialogContent>
+            <MudForm Model="@CertificateDto">
+                <MudCard>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem lg="12" md="12" xs="12">
+                                <MudTextField T="string" 
+                                    Label="الدرجة العلمية" 
+                                    @bind-Value="CertificateDto.Degree" 
+                                    Required="true"
+                                    Margin="Margin.Dense" 
+                                    Variant="Variant.Outlined"/>
+                            </MudItem>
+                            <MudItem lg="12" md="12" xs="12">
+                                <MudTextField T="string" 
+                                    Label="المؤسسة المانحة" 
+                                    @bind-Value="CertificateDto.Institution" 
+                                    Required="true"
+                                    Margin="Margin.Dense" 
+                                    Variant="Variant.Outlined"/>
+                            </MudItem>
+                            <MudItem lg="12" md="12" xs="12">
+                                <MudDatePicker 
+                                    Label="تاريخ المنح" 
+                                    @bind-Date="@_dateAwarded"
+                                    Required="true"
+                                    Margin="Margin.Dense" 
+                                    Variant="Variant.Outlined" />
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveCertificate">حفظ</MudButton>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel">تراجع</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudForm>
+        </DialogContent>
+    </MudDialog>
+}
+
+@code {
+    [Parameter] public Guid FacultyMemberId { get; set; }
+    [Parameter] public Guid CertificateId { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+    [CascadingParameter] public required MudDialogInstance MudDialog { get; set; }
+
+    private CertificateDto? CertificateDto { get; set; }
+
+    private DateTime? _dateAwarded
+    {
+        get => CertificateDto?.DateAwarded.ToDateTime(TimeOnly.MinValue);
+        set
+        {
+            if (CertificateDto != null && value.HasValue)
+            {
+                CertificateDto.DateAwarded = DateOnly.FromDateTime(value.Value);
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CertificateId == Guid.Empty)
+        {
+            CertificateDto = new CertificateDto
+            {
+                FacultyMemberId = FacultyMemberId
+            };
+        }
+        else
+        {
+            CertificateDto = await CertificateService.GetCertificateByIdAsync(CertificateId);
+        }
+    }
+
+    private async Task SaveCertificate()
+    {
+        if (CertificateDto is null) return;
+        
+        await CertificateService.UpsertCertificateAsync(CertificateDto);
+        await OnSave.InvokeAsync();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+} 

@@ -22,7 +22,7 @@ else
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddDialog">جديد</MudButton>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<PublicationDto, object>(x=> x.DatePublished)">تاريخ النشر</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<PublicationDto, object>(x=> x.DatePublished ?? DateTime.MinValue)">تاريخ النشر</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x=>x.Title)">العنوان</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x=>x.Publisher)">الناشر</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x=>x.PublishingType)">نوع المنشور</MudTableSortLabel></MudTh>
@@ -49,8 +49,6 @@ else
     private List<PublicationDto> publications = new();
     private PublicationDto selectedPublication = new();
     private bool isDialogVisible = false;
-    private MudForm form;
-
     protected override async Task OnInitializedAsync()
     {
         await LoadPublications();
@@ -110,8 +108,8 @@ else
         var _dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
 
         var msg = $"سيتم حذف المنشور: {publicationDto.Title}";
-        var result = await DialogService.Show<ConfirmDelete>(msg, parameters, _dialogOptions).Result;
-        if (!result.Canceled)
+        var dialogResult = await DialogService.Show<ConfirmDelete>(msg, parameters, _dialogOptions).Result;
+        if (dialogResult is not null && !dialogResult.Canceled)
         {
             await PublicationService.DeletePublicationAsync(publicationDto.Id);
             Snackbar.Add("Publication deleted successfully", Severity.Success);

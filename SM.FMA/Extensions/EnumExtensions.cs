@@ -1,18 +1,28 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace SM.FMA.Extensions;
-
-public static class EnumExtensions
+namespace SM.FMA.Extensions
 {
-    public static Dictionary<TEnum, string> GetEnumDisplayNames<TEnum>() where TEnum : Enum
+    public static class EnumExtensions
     {
-        return Enum.GetValues(typeof(TEnum))
-            .Cast<TEnum>()
-            .ToDictionary(
-                e => e,
-                e => e.GetType()
-                      .GetField(e.ToString())
-                      ?.GetCustomAttribute<DisplayAttribute>()?.GetName() ?? e.ToString());
+        public static Dictionary<T, string> GetEnumDisplayNames<T>() where T : Enum
+        {
+            return Enum.GetValues(typeof(T))
+                .Cast<T>()
+                .ToDictionary(
+                    e => e,
+                    e => e.GetType()
+                          .GetField(e.ToString())
+                          .GetCustomAttribute<DisplayAttribute>()?.GetName() ?? e.ToString());
+        }
+
+        public static string GetDisplayName(this Enum enumValue)
+        {
+            return enumValue.GetType()
+                .GetMember(enumValue.ToString())
+                .First()
+                .GetCustomAttribute<DisplayAttribute>()
+                ?.GetName() ?? enumValue.ToString();
+        }
     }
-} 
+}

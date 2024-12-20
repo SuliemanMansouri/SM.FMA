@@ -23,7 +23,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 PhoneNumber = teacher.PhoneNumber
             };
 
-            var existingMember = await _dbContext.FacultyMembers
+            var existingMember = await _dbContext.FacultyMembers.Include(x=>x.Publications)
                 .FirstOrDefaultAsync(f => f.Email == teacher.Email);
 
             if (existingMember == null)
@@ -48,7 +48,8 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 Email = facultyMember.Email,
                 PhoneNumber = facultyMember.PhoneNumber,
                 PapersCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Paper),
-                BooksCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Book)
+                BooksCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Book),
+                PublicationsCount = facultyMember.Publications.Count
             };
         }
 
@@ -65,7 +66,9 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
 
         public async Task<FacultyMemberDto> GetFacultyMemberAsync(Guid id)
         {
-            var facultyMember = await _dbContext.FacultyMembers.FindAsync(id);
+            var facultyMember = await _dbContext.FacultyMembers
+                .Include(x=>x.Publications)
+                .FirstOrDefaultAsync(f=>f.Id == id);
             if (facultyMember == null)
                 return null;
 
@@ -76,13 +79,15 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 Email = facultyMember.Email,
                 PhoneNumber = facultyMember.PhoneNumber,
                 PapersCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Paper),
-                BooksCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Book)
+                BooksCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Book),
+                PublicationsCount = facultyMember.Publications.Count
             };
         }
 
         public async Task<IEnumerable<FacultyMemberDto>> GetFacultyMemberAsync(string Name)
         {
             var facultyMembers = await _dbContext.FacultyMembers
+                .Include(x => x.Publications)
                 .Where(f => f.Name.Contains(Name))
                 .Select(f => new FacultyMemberDto
                 {
@@ -91,7 +96,8 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                     Email = f.Email,
                     PhoneNumber = f.PhoneNumber,
                     PapersCount = f.Publications.Count(p => p.PublishingType == PublicationType.Paper),
-                    BooksCount = f.Publications.Count(p => p.PublishingType == PublicationType.Book)
+                    BooksCount = f.Publications.Count(p => p.PublishingType == PublicationType.Book),
+                    PublicationsCount = f.Publications.Count
                 })
                 .ToListAsync();
             return facultyMembers;
@@ -100,6 +106,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
         public async Task<IEnumerable<FacultyMemberDto>> GetFacultyMembersAsync()
         {
             var teachers = await _dbContext.FacultyMembers
+                .Include(x => x.Publications)
                 .Select(f => new FacultyMemberDto
                 {
                     Id = f.Id,
@@ -107,7 +114,8 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                     Email = f.Email,
                     PhoneNumber = f.PhoneNumber,
                     PapersCount = f.Publications.Count(p => p.PublishingType == PublicationType.Paper),
-                    BooksCount = f.Publications.Count(p => p.PublishingType == PublicationType.Book)
+                    BooksCount = f.Publications.Count(p => p.PublishingType == PublicationType.Book),
+                    PublicationsCount = f.Publications.Count
                 })
                 .ToListAsync();
 

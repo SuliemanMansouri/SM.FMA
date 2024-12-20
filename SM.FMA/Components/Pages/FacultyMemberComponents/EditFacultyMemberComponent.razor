@@ -66,11 +66,10 @@ else
             </MudCardActions>
 
             <CascadingValue Value="facultyMember.Id" Name="FacultyMemberId">
-                <MudTabs Elevation="4" Rounded="true" Centered="true">
-                    <MudTabPanel Text="ÇáÔåÇÏÇÊ">
-                        <SM.FMA.Components.Pages.CertificateComponents.CertificatesComponent />
-                    </MudTabPanel>
-                    <MudTabPanel Text="ãäÔæÑÇÊ">
+               
+                <MudTabs Elevation="4" Rounded="true" Centered="true" Color="Color.Primary">
+                    <MudTabPanel Text="ÇáÔåÇÏÇÊ">                    </MudTabPanel>
+                    <MudTabPanel Text="ãäÔæÑÇÊ" BadgeData="facultyMember.PublicationsCount" BadgeColor="Color.Error">
                         <SM.FMA.Components.Pages.PublicationComponents.PublicationsComponent />
                     </MudTabPanel>
                     <MudTabPanel Text="ÇáãäÇÕÈ"></MudTabPanel>

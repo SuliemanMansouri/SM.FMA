@@ -47,6 +47,7 @@ else
 @code {
     
     [CascadingParameter(Name = "FacultyMemberId")] public Guid FacultyMemberId { get; set; }
+    [Parameter] public EventCallback OnPublicationSaved { get; set; }
 
     private List<PublicationDto> publications = new();
     private PublicationDto selectedPublication = new();
@@ -93,6 +94,7 @@ else
     private async Task OnDialogSave()
     {
         await LoadPublications();
+        await OnPublicationSaved.InvokeAsync();
     }
 
 
@@ -116,6 +118,7 @@ else
             await PublicationService.DeletePublicationAsync(publicationDto.Id);
             Snackbar.Add("Publication deleted successfully", Severity.Success);
             await LoadPublications();
+            await OnPublicationSaved.InvokeAsync();
         }
     }
 }

@@ -70,7 +70,7 @@ else
                 <MudTabs Elevation="4" Rounded="true" Centered="true" Color="Color.Primary">
                     <MudTabPanel Text="ÇáÔåÇÏÇÊ">                    </MudTabPanel>
                     <MudTabPanel Text="ãäÔæÑÇÊ" BadgeData="facultyMember.PublicationsCount" BadgeColor="Color.Error">
-                        <SM.FMA.Components.Pages.PublicationComponents.PublicationsComponent />
+                        <SM.FMA.Components.Pages.PublicationComponents.PublicationsComponent OnPublicationSaved="UpdatePublicationsCount"/>
                     </MudTabPanel>
                     <MudTabPanel Text="ÇáãäÇÕÈ"></MudTabPanel>
                     <MudTabPanel Text="ÇáÏÑÌÇÊ ÇáÚáãíÉ"></MudTabPanel>
@@ -124,7 +124,17 @@ else
 
         await FacultyMemberService.UpsertFacultyMemberAsync(facultyMember);
         NavigationManager.NavigateTo($"/facultyMembers", true);
+    }
 
-
+    private async Task UpdatePublicationsCount()
+    {
+        if (facultyMember != null)
+        {
+            var updatedFacultyMember = await FacultyMemberService.GetFacultyMemberAsync(facultyMember.Id);
+            if (updatedFacultyMember != null)
+            {
+                facultyMember.PublicationsCount = updatedFacultyMember.PublicationsCount;
+            }
+        }
     }
 } 

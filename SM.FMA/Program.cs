@@ -31,7 +31,21 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+string? connectionString;
+var computerName = Environment.MachineName;
+if (computerName.ToLower() == "tardis")
+{
+    connectionString = builder.Configuration.GetConnectionString("ServerConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+}
+else
+{
+    connectionString = builder.Configuration.GetConnectionString("LaptopConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+}
+
+if (connectionString == null)
+{
+    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+}
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString,

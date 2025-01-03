@@ -8,6 +8,8 @@ using SM.FMA.Components.Pages.FacultyMemberComponents;
 using SM.FMA.Components.Pages.PublicationComponents;
 using SM.FMA.Data;
 using SM.FMA.Components.Pages.CertificateComponents;
+using Microsoft.AspNetCore.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,8 @@ builder.Services.AddMudServices();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
+builder.Services.AddRazorComponents(options =>
+options.DetailedErrors = builder.Environment.IsProduction());
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -32,20 +35,7 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 string? connectionString;
-var computerName = Environment.MachineName;
-if (computerName.ToLower() == "tardis")
-{
-    connectionString = builder.Configuration.GetConnectionString("ServerConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-}
-else
-{
-    connectionString = builder.Configuration.GetConnectionString("LaptopConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-}
-
-if (connectionString == null)
-{
-    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-}
+connectionString = builder.Configuration.GetConnectionString("ServerConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString,
@@ -74,15 +64,35 @@ builder.Services.AddScoped<ICertificateService, CertificateService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
-}
-else
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseExceptionHandler(exceptionHandlerApp =>
+    {
+        exceptionHandlerApp.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+            // using static System.Net.Mime.MediaTypeNames;
+            context.Response.ContentType = Text.Plain;
+
+            await context.Response.WriteAsync("An exception was thrown.");
+
+            var exceptionHandlerPathFeature =
+                context.Features.Get<IExceptionHandlerPathFeature>();
+
+            await context.Response.WriteAsync(exceptionHandlerPathFeature.Error.ToString());
+
+            if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
+            {
+                await context.Response.WriteAsync(" The file was not found.");
+            }
+
+            if (exceptionHandlerPathFeature?.Path == "/")
+            {
+                await context.Response.WriteAsync(" Page: Home.");
+            }
+        });
+    });
 }
 
 app.UseHttpsRedirection();

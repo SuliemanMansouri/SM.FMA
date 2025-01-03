@@ -7,15 +7,16 @@ namespace SM.FMA.Components.Pages.PublicationComponents
 {
     public class PublicationService : IPublicationService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
 
-        public PublicationService(ApplicationDbContext context)
+        public PublicationService(IDbContextFactory<ApplicationDbContext> dbContextFactory)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
         }
 
         public async Task<IEnumerable<PublicationDto>> GetAllPublicationsAsync()
         {
+            var _context = _dbContextFactory.CreateDbContext();
             return await _context.Publications
                 .Select(p => new PublicationDto
                 {
@@ -32,6 +33,7 @@ namespace SM.FMA.Components.Pages.PublicationComponents
 
         public async Task<PublicationDto?> GetPublicationByIdAsync(Guid id)
         {
+            var _context = _dbContextFactory.CreateDbContext();
             var publication = await _context.Publications.FindAsync(id);
             if (publication == null) return null;
 
@@ -47,9 +49,9 @@ namespace SM.FMA.Components.Pages.PublicationComponents
             };
         }
 
-
         public async Task DeletePublicationAsync(Guid id)
         {
+            var _context = _dbContextFactory.CreateDbContext();
             var publication = await _context.Publications.FindAsync(id);
             if (publication != null)
             {
@@ -60,6 +62,7 @@ namespace SM.FMA.Components.Pages.PublicationComponents
 
         public async Task<IEnumerable<PublicationDto>> GetFacultyMemeberPublicationsAsync(Guid facultyMemberId)
         {
+            var _context = _dbContextFactory.CreateDbContext();
             var publications = await _context.Publications
                 .Where(p => p.FacultyMemberId == facultyMemberId)
                 .Select(p => new PublicationDto
@@ -74,12 +77,11 @@ namespace SM.FMA.Components.Pages.PublicationComponents
                 }).ToListAsync();
 
             return publications;
-
-
         }
 
         public async Task<PublicationDto> UpsertPublicationAsync(PublicationDto publication)
         {
+            var _context = _dbContextFactory.CreateDbContext();
             var entity = new Publication
             {
                 Id = publication.Id,
@@ -91,7 +93,7 @@ namespace SM.FMA.Components.Pages.PublicationComponents
                 FacultyMemberId = publication.FacultyMemberId
             };
 
-            var existing = _context.Publications.Find(entity.Id);
+            var existing = await _context.Publications.FindAsync(entity.Id);
             if (existing == null)
             {
                 _context.Publications.Add(entity);
@@ -104,7 +106,6 @@ namespace SM.FMA.Components.Pages.PublicationComponents
                 existing.PublishingType = entity.PublishingType;
                 existing.CoAuthors = entity.CoAuthors;
                 existing.FacultyMemberId = entity.FacultyMemberId;
-
             }
 
             await _context.SaveChangesAsync();

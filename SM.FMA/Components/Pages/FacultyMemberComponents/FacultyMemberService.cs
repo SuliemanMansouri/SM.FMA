@@ -7,38 +7,43 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
 {
     public class FacultyMemberService : IFacultyMemberService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
 
-        public FacultyMemberService(ApplicationDbContext dbContext)
+        public FacultyMemberService(IDbContextFactory<ApplicationDbContext> dbContextFactory)
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
         }
+
         public async Task<FacultyMemberDto> UpsertFacultyMemberAsync(FacultyMemberDto teacher)
         {
+            var _dbContext = _dbContextFactory.CreateDbContext();
             var facultyMember = new FacultyMember
             {
                 Id = teacher.Id,
                 Name = teacher.Name,
                 Email = teacher.Email,
-                PhoneNumber = teacher.PhoneNumber
+                PhoneNumber = teacher.PhoneNumber,
+                Publications = new List<Publication>(),
+                Certificates = new List<Certificate>(),
+                FacultyPositions = new List<FacultyPosition>(),
+                FacultyRanks = new List<FacultyRank>(),
+                FacultyTitles = new List<FacultyTitle>()
             };
 
-            var existingMember = await _dbContext.FacultyMembers.Include(x=>x.Publications)
+            var existingMember = await _dbContext.FacultyMembers.Include(x => x.Publications)
                 .FirstOrDefaultAsync(f => f.Email == teacher.Email);
 
             if (existingMember == null)
             {
                 await _dbContext.FacultyMembers.AddAsync(facultyMember);
-
             }
             else
             {
                 existingMember.Name = teacher.Name;
                 existingMember.Email = teacher.Email;
                 existingMember.PhoneNumber = teacher.PhoneNumber;
-
             }
-            
+
             await _dbContext.SaveChangesAsync();
 
             return new FacultyMemberDto
@@ -55,20 +60,21 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
 
         public async Task DeleteFacultyMemberAsync(Guid id)
         {
+            var _dbContext = _dbContextFactory.CreateDbContext();
             var facultyMember = await _dbContext.FacultyMembers.FindAsync(id);
             if (facultyMember != null)
             {
                 _dbContext.FacultyMembers.Remove(facultyMember);
                 await _dbContext.SaveChangesAsync();
             }
-            
         }
 
         public async Task<FacultyMemberDto> GetFacultyMemberAsync(Guid id)
         {
+            var _dbContext = _dbContextFactory.CreateDbContext();
             var facultyMember = await _dbContext.FacultyMembers
-                .Include(x=>x.Publications)
-                .FirstOrDefaultAsync(f=>f.Id == id);
+                .Include(x => x.Publications)
+                .FirstOrDefaultAsync(f => f.Id == id);
             if (facultyMember == null)
                 return null;
 
@@ -86,13 +92,14 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
 
         public async Task<IEnumerable<FacultyMemberDto>> GetFacultyMemberAsync(string Name)
         {
+            var _dbContext = _dbContextFactory.CreateDbContext();
             var facultyMembers = await _dbContext.FacultyMembers
                 .Include(x => x.Publications)
                 .Where(f => f.Name.Contains(Name))
                 .Select(f => new FacultyMemberDto
                 {
                     Id = f.Id,
-                    Name = f.Name, 
+                    Name = f.Name,
                     Email = f.Email,
                     PhoneNumber = f.PhoneNumber,
                     PapersCount = f.Publications.Count(p => p.PublishingType == PublicationType.Paper),
@@ -105,6 +112,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
 
         public async Task<IEnumerable<FacultyMemberDto>> GetFacultyMembersAsync()
         {
+            var _dbContext = _dbContextFactory.CreateDbContext();
             var teachers = await _dbContext.FacultyMembers
                 .Include(x => x.Publications)
                 .Select(f => new FacultyMemberDto
@@ -121,6 +129,5 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
 
             return teachers;
         }
-       
     }
 }

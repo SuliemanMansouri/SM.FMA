@@ -8,7 +8,7 @@ namespace SM.FMA.Tests
 {
     public class FacultyMemberServiceTests
     {
-       
+
         private IDbContextFactory<ApplicationDbContext> GetDbContextFactory(DbContextOptions<ApplicationDbContext> options)
         {
             var mockFactory = new Mock<IDbContextFactory<ApplicationDbContext>>();
@@ -108,22 +108,18 @@ namespace SM.FMA.Tests
                 PhoneNumber = "1234567890"
             };
 
-            using (var cf = factory.CreateDbContext())
-            {
-                cf.FacultyMembers.Add(existingFacultyMember);
-                await cf.SaveChangesAsync();
-            }
-            options = GetNewContextOptions();
-            factory = GetDbContextFactory(options);
+            var cf = factory.CreateDbContext();
+            cf.FacultyMembers.Add(existingFacultyMember);
+            await cf.SaveChangesAsync();
+
             var service = new FacultyMemberService(factory);
 
             // Act
             await service.DeleteFacultyMemberAsync(facultyMemberId);
 
             // Assert
-            options = GetNewContextOptions();
-            factory = GetDbContextFactory(options);
-            using var context = factory.CreateDbContext();
+            
+            var context = factory.CreateDbContext();
             var deletedMember = await context.FacultyMembers.FindAsync(facultyMemberId);
             Assert.Null(deletedMember);
         }
@@ -166,6 +162,62 @@ namespace SM.FMA.Tests
 
             // Assert
             Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetFacultyMemberAsync_ShouldReturnFacultyMemberByName_WhenFacultyMemberExists()
+        {
+            // Arrange
+            var options = GetNewContextOptions();
+            var factory = GetDbContextFactory(options);
+            var service = new FacultyMemberService(factory);
+            var newFacultyMember = new FacultyMemberDto
+            {
+                Name = "John Doe",
+                PhoneNumber = "123456789",
+                Email = "author@company.com"
+            };
+            var savedFacultyMember = await service.UpsertFacultyMemberAsync(newFacultyMember);
+
+            // Act
+            var fetchedFacultyMember = await service.GetFacultyMemberAsync("John Doe");
+
+            // Assert
+            Assert.NotNull(fetchedFacultyMember);
+            Assert.Equal(newFacultyMember.Name, fetchedFacultyMember.ToList()[0].Name);
+        }
+
+        [Fact]
+        public async Task GetFacultyMemberAsync_ShouldReturnTwoFacultyMembers_WhenFacultyMemberExists()
+        {
+            // Arrange
+            var options = GetNewContextOptions();
+            var factory = GetDbContextFactory(options);
+            var service = new FacultyMemberService(factory);
+            var newFacultyMember1 = new FacultyMemberDto
+            {
+                Id = Guid.NewGuid(),
+                Name = "John Doe1",
+                PhoneNumber = "123456789",
+                Email = "author1@company.com"
+            };
+            var savedFacultyMember1 = await service.UpsertFacultyMemberAsync(newFacultyMember1);
+
+            var newFacultyMember2 = new FacultyMemberDto
+            {
+                Id = Guid.NewGuid(),
+                Name = "John Doe2",
+                PhoneNumber = "123456789",
+                Email = "author2@company.com"
+            };
+            var savedFacultyMember2 = await service.UpsertFacultyMemberAsync(newFacultyMember2);
+            // Act
+            var fetchedFacultyMember = await service.GetFacultyMemberAsync("John");
+
+            // Assert
+            Assert.NotNull(fetchedFacultyMember);
+            Assert.Equal(2, fetchedFacultyMember.Count());
+            
         }
     }
 }

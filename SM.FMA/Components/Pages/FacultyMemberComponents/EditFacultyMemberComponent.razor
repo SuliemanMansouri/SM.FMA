@@ -22,11 +22,10 @@ else
             </MudCardHeader>
 
             <MudCardContent>
-                <MudGrid >
+                <MudGrid Spacing="1">
                     <MudItem lg="2" md="6" xs="12">
                         <MudTextField T="string"
                         Label="«·—ﬁ„ «·ÊŸÌ›Ì"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.EmployeeId"
@@ -35,7 +34,6 @@ else
                     <MudItem lg="2" md="6" xs="12">
                         <MudTextField T="string"
                         Label="«·—ﬁ„ «·Êÿ‰Ì"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.NID"/>
@@ -43,7 +41,6 @@ else
                     <MudItem lg="2" md="6" xs="12">
                         <MudTextField T="string"
                         Label="«·—ﬁ„ «·÷„«‰Ì"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.SSN"/>
@@ -52,7 +49,6 @@ else
                     <MudItem lg="2" md="6" xs="12">
                         <MudTextField T="string"
                         Label="«·—ﬁ„ «·„«·Ì"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.FinancialNumber" />
@@ -79,7 +75,6 @@ else
                     <MudItem lg="4" md="6" xs="12">
                         <MudTextField T="string"
                         Label="«·»—Ìœ «·≈·ﬂ —Ê‰Ì"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.Email"
@@ -89,7 +84,6 @@ else
                     <MudItem lg="2" md="6" xs="12">
                         <MudTextField T="string"
                         Label="—ﬁ„ «·Â« ›"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.PhoneNumber"
@@ -98,7 +92,6 @@ else
                     <MudItem lg="2" md="6" xs="12">
                         <MudTextField T="DateTime"
                         Label=" «—ÌŒ «·„Ì·«œ"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.DOB"
@@ -107,25 +100,30 @@ else
                     <MudItem lg="2" md="6" xs="12">
                         <MudTextField T="string"
                         Label="„ﬂ«‰ «·„Ì·«œ"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.POB"/>
                     </MudItem>
+                   
                     <MudItem lg="2" md="6" xs="12">
-                        <MudToggleIconButton Icon="@Icons.Material.Filled.Man"
-                        Color="@Color.Primary"
-                        ToggledIcon="@Icons.Material.Filled.Woman"
-                        ToggledColor="@Color.Error"
-                        ToggledChanged="SetSex" 
-                        Size="Size.Large"
-                        title="«·Ã‰”"/>
-
+                        <MudSelect T="char"
+                        Label="«·Ã‰”"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.Sex">
+                            <MudSelectItem Value="@('M')">
+                                <MudIcon Icon="@Icons.Material.Filled.Man"/>
+                                –ﬂ—
+                            </MudSelectItem>
+                            <MudSelectItem Value="@('F')">
+                                <MudIcon Icon="@Icons.Material.Filled.Woman" />
+                                √‰ÀÏ
+                                </MudSelectItem>
+                        </MudSelect>
                     </MudItem>
                     <MudItem lg="4" md="4" xs="12">
                         <MudTextField T="string"
                         Label="—ﬁ„ «·Õ”«»"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.IBAN" />
@@ -133,7 +131,6 @@ else
                     <MudItem lg="4" md="4" xs="12">
                         <MudTextField T="string"
                         Label="«·€—⁄"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.BranchName" />
@@ -141,7 +138,6 @@ else
                     <MudItem lg="4" md="4" xs="12">
                         <MudTextField T="string"
                         Label="«·„’—›"
-                        md="6"
                         Variant="Variant.Outlined"
                         Margin="Margin.Dense"
                         @bind-Value="facultyMember.BankName" />

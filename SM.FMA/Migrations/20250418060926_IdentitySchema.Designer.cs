@@ -12,15 +12,15 @@ using SM.FMA.Data;
 namespace SM.FMA.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241129173150_FacultyMembers")]
-    partial class FacultyMembers
+    [Migration("20250418060926_IdentitySchema")]
+    partial class IdentitySchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "8.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -223,176 +223,6 @@ namespace SM.FMA.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SM.FMA.Data.Entities.Certificate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly>("DateAwarded")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Degree")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Institution")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.ToTable("Certificates");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.FacultyMember", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DateOfJoining")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FacultyMembers");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.FacultyPosition", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Office")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PositionName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.ToTable("FacultyPositions");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.FacultyRank", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CriteriaMet")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly>("PromotionDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("RankName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.ToTable("FacultyRanks");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.FacultyTitle", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("SabbaticalLeaveEveryYears")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeachingHoursPerWeek")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TitleName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.ToTable("FacultyTitles");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.Publication", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CoAuthors")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("DatePublished")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Publisher")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PublishingType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.ToTable("Publications");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -442,74 +272,6 @@ namespace SM.FMA.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.Certificate", b =>
-                {
-                    b.HasOne("SM.FMA.Data.Entities.FacultyMember", "FacultyMember")
-                        .WithMany("Certificates")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.FacultyPosition", b =>
-                {
-                    b.HasOne("SM.FMA.Data.Entities.FacultyMember", "FacultyMember")
-                        .WithMany("FacultyPositions")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.FacultyRank", b =>
-                {
-                    b.HasOne("SM.FMA.Data.Entities.FacultyMember", "FacultyMember")
-                        .WithMany("FacultyRanks")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.FacultyTitle", b =>
-                {
-                    b.HasOne("SM.FMA.Data.Entities.FacultyMember", "FacultyMember")
-                        .WithMany("FacultyTitles")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.Publication", b =>
-                {
-                    b.HasOne("SM.FMA.Data.Entities.FacultyMember", "FacultyMember")
-                        .WithMany("Publications")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("SM.FMA.Data.Entities.FacultyMember", b =>
-                {
-                    b.Navigation("Certificates");
-
-                    b.Navigation("FacultyPositions");
-
-                    b.Navigation("FacultyRanks");
-
-                    b.Navigation("FacultyTitles");
-
-                    b.Navigation("Publications");
                 });
 #pragma warning restore 612, 618
         }

@@ -84,7 +84,7 @@ else
         }
         else
         {
-            CertificateDto = await CertificateService.GetCertificateByIdAsync(CertificateId);
+            //CertificateDto = await CertificateService.GetCertificateByIdAsync(CertificateId);
         }
     }
 
@@ -92,7 +92,7 @@ else
     {
         if (CertificateDto is null) return;
         
-        await CertificateService.UpsertCertificateAsync(CertificateDto);
+        //await CertificateService.UpsertCertificateAsync(CertificateDto);
         await OnSave.InvokeAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }

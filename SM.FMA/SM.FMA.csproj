@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <Folder Include="Api\" />
+    <Folder Include="Data\Migrations\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

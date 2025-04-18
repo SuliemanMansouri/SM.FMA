@@ -53,7 +53,7 @@
 
     private async Task LoadCertificates()
     {
-        certificates = await CertificateService.GetCertificatesAsync(FacultyMemberId);
+        //certificates = await CertificateService.GetCertificatesAsync(FacultyMemberId);
     }
 
     private async Task AddCertificate()
@@ -100,7 +100,7 @@
 
         if (result == true)
         {
-            await CertificateService.DeleteCertificateAsync(id);
+            //await CertificateService.DeleteCertificateAsync(id);
             await LoadCertificates();
             Snackbar.Add("تم حذف الشهادة بنجاح", Severity.Success);
         }

@@ -28,7 +28,7 @@ else
         </ToolBarContent>
         <HeaderContent>
             <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<FacultyMemberDto, object>(x=>x.Id)">رقم</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.Name)">إسم</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.NameAr)">إسم</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.Email)">بريد إلكتروني</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.PhoneNumber)">رقم الهاتف</MudTableSortLabel></MudTh>
             <MudTh>العمليات</MudTh>
@@ -36,7 +36,7 @@ else
 
         <RowTemplate>
             <MudTd DataLabel="رقم">@context.Id</MudTd>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Name">@context.NameAr</MudTd>
             <MudTd DataLabel="Email">@context.Email</MudTd>
             <MudTd DataLabel="Phone Number" Style="direction:ltr">@context.PhoneNumber</MudTd>
             <MudTd>
@@ -96,7 +96,7 @@ else
 
         var _dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
 
-        var msg = $"سيتم حذف عضو هيئة التدريس: {facultyMemberDto.Name}";
+        var msg = $"سيتم حذف عضو هيئة التدريس: {facultyMemberDto.NameAr}";
         var result = await DialogService.Show<ConfirmDelete>(msg, parameters, _dialogOptions).Result;
         if (!result.Canceled)
         {

@@ -22,17 +22,25 @@ else
             </MudCardHeader>
 
             <MudCardContent>
-                <MudGrid Spacing="3">
+                <MudGrid >
                     <MudItem lg="6" md="12" xs="12">
                         <MudTextField T="string"
                                       Label="ÇáÅÓã"
                                       Variant="Variant.Outlined"
                                       Margin="Margin.Dense"
-                                      @bind-Value="facultyMember.Name"
+                                      @bind-Value="facultyMember.NameAr"
                                       Required="true"
                                       RequiredError="Name is required" />
                     </MudItem>
-
+                    <MudItem lg="6" md="12" xs="12">
+                        <MudTextField T="string"
+                                      Label="Name"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      @bind-Value="facultyMember.NameEn"
+                                      Required="true"
+                                      RequiredError="Name is required" />
+                    </MudItem>
                     <MudItem lg="4" md="6" xs="12">
                         <MudTextField T="string"
                                       Label="ÇáÈÑíÏ ÇáÅáßÊÑæäí"

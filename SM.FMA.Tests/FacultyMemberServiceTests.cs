@@ -33,7 +33,7 @@ namespace SM.FMA.Tests
             var facultyMemberDto = new FacultyMemberDto
             {
                 Id = Guid.NewGuid(),
-                Name = "John Doe",
+                NameAr = "John Doe",
                 Email = "john.doe@example.com",
                 PhoneNumber = "1234567890"
             };
@@ -47,7 +47,7 @@ namespace SM.FMA.Tests
             using var context = new ApplicationDbContext(options);
             var addedMember = await context.FacultyMembers.FindAsync(result.Id);
             Assert.NotNull(addedMember);
-            Assert.Equal(facultyMemberDto.Name, addedMember.Name);
+            Assert.Equal(facultyMemberDto.NameAr, addedMember.NameAr);
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace SM.FMA.Tests
             var existingFacultyMember = new FacultyMember
             {
                 Id = Guid.NewGuid(),
-                Name = "John Doe",
+                NameAr = "John Doe",
                 Email = "john.doe@example.com",
                 PhoneNumber = "1234567890"
             };
@@ -75,7 +75,7 @@ namespace SM.FMA.Tests
             var facultyMemberDto = new FacultyMemberDto
             {
                 Id = existingFacultyMember.Id,
-                Name = "Jane Doe",
+                NameAr = "Jane Doe",
                 Email = "john.doe@example.com",
                 PhoneNumber = "0987654321"
             };
@@ -88,7 +88,7 @@ namespace SM.FMA.Tests
             var context = factory.CreateDbContext();
             var updatedMember = await context.FacultyMembers.FindAsync(result.Id);
             Assert.NotNull(updatedMember);
-            Assert.Equal(facultyMemberDto.Name, updatedMember.Name);
+            Assert.Equal(facultyMemberDto.NameAr, updatedMember.NameAr);
             Assert.Equal(facultyMemberDto.PhoneNumber, updatedMember.PhoneNumber);
         }
 
@@ -103,7 +103,7 @@ namespace SM.FMA.Tests
             var existingFacultyMember = new FacultyMember
             {
                 Id = facultyMemberId,
-                Name = "John Doe",
+                NameAr = "John Doe",
                 Email = "john.doe@example.com",
                 PhoneNumber = "1234567890"
             };
@@ -133,7 +133,7 @@ namespace SM.FMA.Tests
             var service = new FacultyMemberService(factory);
             var newFacultyMember = new FacultyMemberDto
             {
-                Name = "John Doe",
+                NameAr = "John Doe",
                 PhoneNumber = "123456789",
                 Email = "author@company.com"
             };
@@ -144,7 +144,7 @@ namespace SM.FMA.Tests
 
             // Assert
             Assert.NotNull(fetchedFacultyMember);
-            Assert.Equal(newFacultyMember.Name, fetchedFacultyMember.Name);
+            Assert.Equal(newFacultyMember.NameAr, fetchedFacultyMember.NameAr);
         }
 
         [Fact]
@@ -173,7 +173,7 @@ namespace SM.FMA.Tests
             var service = new FacultyMemberService(factory);
             var newFacultyMember = new FacultyMemberDto
             {
-                Name = "John Doe",
+                NameAr = "John Doe",
                 PhoneNumber = "123456789",
                 Email = "author@company.com"
             };
@@ -184,7 +184,7 @@ namespace SM.FMA.Tests
 
             // Assert
             Assert.NotNull(fetchedFacultyMember);
-            Assert.Equal(newFacultyMember.Name, fetchedFacultyMember.ToList()[0].Name);
+            Assert.Equal(newFacultyMember.NameAr, fetchedFacultyMember.ToList()[0].NameAr);
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace SM.FMA.Tests
             var newFacultyMember1 = new FacultyMemberDto
             {
                 Id = Guid.NewGuid(),
-                Name = "John Doe1",
+                NameAr = "John Doe1",
                 PhoneNumber = "123456789",
                 Email = "author1@company.com"
             };
@@ -206,7 +206,7 @@ namespace SM.FMA.Tests
             var newFacultyMember2 = new FacultyMemberDto
             {
                 Id = Guid.NewGuid(),
-                Name = "John Doe2",
+                NameAr = "John Doe2",
                 PhoneNumber = "123456789",
                 Email = "author2@company.com"
             };

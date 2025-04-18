@@ -74,7 +74,7 @@ else
     [Parameter] public Guid FacultyMemberId { get; set; }
     [Parameter] public Guid PublicationId { get; set; }
     [Parameter] public EventCallback OnSave { get; set; }
-    [CascadingParameter] public required MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
     private PublicationDto? PublicationDto { get; set; }
    

@@ -23,58 +23,143 @@ else
 
             <MudCardContent>
                 <MudGrid >
-                    <MudItem lg="6" md="12" xs="12">
+                    <MudItem lg="2" md="6" xs="12">
                         <MudTextField T="string"
-                                      Label="«·≈”„"
-                                      Variant="Variant.Outlined"
-                                      Margin="Margin.Dense"
-                                      @bind-Value="facultyMember.NameAr"
-                                      Required="true"
-                                      RequiredError="Name is required" />
-                    </MudItem>
-                    <MudItem lg="6" md="12" xs="12">
-                        <MudTextField T="string"
-                                      Label="Name"
-                                      Variant="Variant.Outlined"
-                                      Margin="Margin.Dense"
-                                      @bind-Value="facultyMember.NameEn"
-                                      Required="true"
-                                      RequiredError="Name is required" />
-                    </MudItem>
-                    <MudItem lg="4" md="6" xs="12">
-                        <MudTextField T="string"
-                                      Label="«·»—Ìœ «·≈·ﬂ —Ê‰Ì"
-                                      md="6"
-                                      Variant="Variant.Outlined"
-                                      Margin="Margin.Dense"
-                                      @bind-Value="facultyMember.Email"
-                                      Required="true"
-                                      RequiredError="Email is required" />
+                        Label="«·—ﬁ„ «·ÊŸÌ›Ì"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.EmployeeId"
+                        Style="direction:ltr" />
                     </MudItem>
                     <MudItem lg="2" md="6" xs="12">
                         <MudTextField T="string"
-                                      Label="—ﬁ„ «·Â« ›"
-                                      md="6"
-                                      Variant="Variant.Outlined"
-                                      Margin="Margin.Dense"
-                                      @bind-Value="facultyMember.PhoneNumber"
-                                      Style="direction:ltr" />
+                        Label="«·—ﬁ„ «·Êÿ‰Ì"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.NID"/>
+                    </MudItem>
+                    <MudItem lg="2" md="6" xs="12">
+                        <MudTextField T="string"
+                        Label="«·—ﬁ„ «·÷„«‰Ì"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.SSN"/>
                     </MudItem>
 
+                    <MudItem lg="2" md="6" xs="12">
+                        <MudTextField T="string"
+                        Label="«·—ﬁ„ «·„«·Ì"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.FinancialNumber" />
+                    </MudItem>
+                    <MudItem lg="6" md="12" xs="12">
+                        <MudTextField T="string"
+                        Label="«·≈”„"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.NameAr"
+                        Required="true"
+                        RequiredError="Name is required" />
+                    </MudItem>
+                    <MudItem lg="6" md="12" xs="12">
+                        <MudTextField T="string"
+                        Label="Name"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.NameEn"
+                        Required="true"
+                        RequiredError="Name is required" 
+                        Style="direction:ltr"/>
+                    </MudItem>
+                    <MudItem lg="4" md="6" xs="12">
+                        <MudTextField T="string"
+                        Label="«·»—Ìœ «·≈·ﬂ —Ê‰Ì"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.Email"
+                        Required="true"
+                        RequiredError="Email is required" />
+                    </MudItem>
+                    <MudItem lg="2" md="6" xs="12">
+                        <MudTextField T="string"
+                        Label="—ﬁ„ «·Â« ›"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.PhoneNumber"
+                        Style="direction:ltr" />
+                    </MudItem>
+                    <MudItem lg="2" md="6" xs="12">
+                        <MudTextField T="DateTime"
+                        Label=" «—ÌŒ «·„Ì·«œ"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.DOB"
+                        Format="yyyy/MM/dd"/>
+                    </MudItem>
+                    <MudItem lg="2" md="6" xs="12">
+                        <MudTextField T="string"
+                        Label="„ﬂ«‰ «·„Ì·«œ"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.POB"/>
+                    </MudItem>
+                    <MudItem lg="2" md="6" xs="12">
+                        <MudToggleIconButton Icon="@Icons.Material.Filled.Man"
+                        Color="@Color.Primary"
+                        ToggledIcon="@Icons.Material.Filled.Woman"
+                        ToggledColor="@Color.Error"
+                        ToggledChanged="SetSex" 
+                        Size="Size.Large"
+                        title="«·Ã‰”"/>
+
+                    </MudItem>
+                    <MudItem lg="4" md="4" xs="12">
+                        <MudTextField T="string"
+                        Label="—ﬁ„ «·Õ”«»"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.IBAN" />
+                    </MudItem>
+                    <MudItem lg="4" md="4" xs="12">
+                        <MudTextField T="string"
+                        Label="«·€—⁄"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.BranchName" />
+                    </MudItem>
+                    <MudItem lg="4" md="4" xs="12">
+                        <MudTextField T="string"
+                        Label="«·„’—›"
+                        md="6"
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        @bind-Value="facultyMember.BankName" />
+                    </MudItem>
                 </MudGrid>
             </MudCardContent>
 
             <MudCardActions Class="d-flex justify-end mt-2">
                 <MudButton Variant="Variant.Outlined"
-                           Color="Color.Primary"
-                           OnClick="HandleSaveAsync">Õ›Ÿ</MudButton>
+                Color="Color.Primary"
+                OnClick="HandleSaveAsync">Õ›Ÿ</MudButton>
                 <MudButton Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           OnClick="HandleSaveAndCloseAsync">Õ›Ÿ Ê ≈€·«ﬁ</MudButton>
+                Color="Color.Primary"
+                OnClick="HandleSaveAndCloseAsync">Õ›Ÿ Ê ≈€·«ﬁ</MudButton>
             </MudCardActions>
 
             <CascadingValue Value="facultyMember.Id" Name="FacultyMemberId">
-               
+
                 <MudTabs Elevation="4" Rounded="true" Centered="true" Color="Color.Primary">
                     <MudTabPanel Text="«·‘Â«œ« ">                    </MudTabPanel>
                     <MudTabPanel Text="„‰‘Ê—« " BadgeData="facultyMember.PublicationsCount" BadgeColor="Color.Error">
@@ -143,6 +228,22 @@ else
             {
                 facultyMember.PublicationsCount = updatedFacultyMember.PublicationsCount;
             }
+        }
+    }
+    private void SetSex(bool args)
+    {
+        if (facultyMember == null)
+        {
+            return;
+        }
+        
+        if(args == true)
+        {
+            facultyMember.Sex = 'M';
+        }
+        else
+        {
+            facultyMember.Sex = 'F';
         }
     }
 } 

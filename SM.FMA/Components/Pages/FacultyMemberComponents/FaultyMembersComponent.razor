@@ -27,7 +27,7 @@ else
                        OnClick="() => NavigateToUpsertForm()">إضافة</MudButton>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<FacultyMemberDto, object>(x=>x.Id)">رقم</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<FacultyMemberDto, object>(x=>x.EmployeeId)">الرقم الوظيفي</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.NameAr)">إسم</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.Email)">بريد إلكتروني</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.PhoneNumber)">رقم الهاتف</MudTableSortLabel></MudTh>
@@ -35,7 +35,7 @@ else
         </HeaderContent>
 
         <RowTemplate>
-            <MudTd DataLabel="رقم">@context.Id</MudTd>
+            <MudTd DataLabel="رقم">@context.EmployeeId</MudTd>
             <MudTd DataLabel="Name">@context.NameAr</MudTd>
             <MudTd DataLabel="Email">@context.Email</MudTd>
             <MudTd DataLabel="Phone Number" Style="direction:ltr">@context.PhoneNumber</MudTd>

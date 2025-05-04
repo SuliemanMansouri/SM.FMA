@@ -1,6 +1,7 @@
-@inject ICertificateService CertificateService
-@inject ISnackbar Snackbar
 @using SM.FMA.Extensions
+@inject ICertificateService CertificateService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
 @if (CertificateDto == null)
 {
@@ -18,27 +19,27 @@ else
                         <MudGrid>
                             <MudItem lg="12" md="12" xs="12">
                                 <MudTextField T="string" 
-                                    Label="الدرجة العلمية" 
-                                    @bind-Value="CertificateDto.Degree" 
-                                    Required="true"
-                                    Margin="Margin.Dense" 
-                                    Variant="Variant.Outlined"/>
+                                Label="الدرجة العلمية" 
+                                @bind-Value="CertificateDto.Degree" 
+                                Required="true"
+                                Margin="Margin.Dense" 
+                                Variant="Variant.Outlined"/>
                             </MudItem>
                             <MudItem lg="12" md="12" xs="12">
                                 <MudTextField T="string" 
-                                    Label="المؤسسة المانحة" 
-                                    @bind-Value="CertificateDto.Institution" 
-                                    Required="true"
-                                    Margin="Margin.Dense" 
-                                    Variant="Variant.Outlined"/>
+                                Label="المؤسسة المانحة" 
+                                @bind-Value="CertificateDto.Institution" 
+                                Required="true"
+                                Margin="Margin.Dense" 
+                                Variant="Variant.Outlined"/>
                             </MudItem>
                             <MudItem lg="12" md="12" xs="12">
                                 <MudDatePicker 
-                                    Label="تاريخ المنح" 
-                                    @bind-Date="@_dateAwarded"
-                                    Required="true"
-                                    Margin="Margin.Dense" 
-                                    Variant="Variant.Outlined" />
+                                Label="تاريخ المنح" 
+                                @bind-Date="@_dateAwarded"
+                                Required="true"
+                                Margin="Margin.Dense" 
+                                Variant="Variant.Outlined" />
                             </MudItem>
                         </MudGrid>
                     </MudCardContent>
@@ -53,13 +54,17 @@ else
     </MudDialog>
 }
 
+
 @code {
+    protected MudForm? form;
+
     [Parameter] public Guid FacultyMemberId { get; set; }
     [Parameter] public Guid CertificateId { get; set; }
     [Parameter] public EventCallback OnSave { get; set; }
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
     private CertificateDto? CertificateDto { get; set; }
+    
 
     private DateTime? _dateAwarded
     {
@@ -84,7 +89,7 @@ else
         }
         else
         {
-            //CertificateDto = await CertificateService.GetCertificateByIdAsync(CertificateId);
+            CertificateDto = await CertificateService.GetCertificateByIdAsync(CertificateId);
         }
     }
 
@@ -92,7 +97,7 @@ else
     {
         if (CertificateDto is null) return;
         
-        //await CertificateService.UpsertCertificateAsync(CertificateDto);
+        await CertificateService.UpsertCertificateAsync(CertificateDto);
         await OnSave.InvokeAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }

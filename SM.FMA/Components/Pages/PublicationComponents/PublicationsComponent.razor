@@ -1,5 +1,4 @@
-﻿@page "/PublicationsComponent"
-@using MudBlazor
+﻿@using MudBlazor
 @using SM.FMA.Components.Pages.Dialogs
 @using SM.FMA.Components.Pages.PublicationComponents
 @using SM.FMA.Data.Enums
@@ -19,7 +18,11 @@ else
     <MudTable Items="publications" Hover="true" @bind-SelectedItem="selectedPublication" Dense="true">
         <ToolBarContent>
             <MudSpacer />
-            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="OpenAddDialog">جديد</MudIconButton>
+            <MudIconButton Icon="@Icons.Material.Filled.Add"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           OnClick="OpenAddDialog">جديد</MudIconButton>
         </ToolBarContent>
         <HeaderContent>
             <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<PublicationDto, object>(x=> x.DatePublished ?? DateTime.MinValue)">تاريخ النشر</MudTableSortLabel></MudTh>
@@ -45,7 +48,7 @@ else
 
 
 @code {
-    
+
     [CascadingParameter(Name = "FacultyMemberId")] public Guid FacultyMemberId { get; set; }
     [Parameter] public EventCallback OnPublicationSaved { get; set; }
 
@@ -71,8 +74,8 @@ else
                 ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
             };
         selectedPublication = new PublicationDto { FacultyMemberId = FacultyMemberId };
-        DialogService.Show<EditPublication>("إضافة منشور", 
-        parameters, 
+        DialogService.ShowAsync<EditPublication>("إضافة منشور",
+        parameters,
         new DialogOptions { MaxWidth = MaxWidth.Small });
     }
 
@@ -86,7 +89,7 @@ else
                 ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
             };
 
-        DialogService.Show<EditPublication>("تعديل منشور",
+        DialogService.ShowAsync<EditPublication>("تعديل منشور",
         parameters,
         new DialogOptions { MaxWidth = MaxWidth.Small });
     }
@@ -112,8 +115,8 @@ else
         var _dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
 
         var msg = $"سيتم حذف المنشور: {publicationDto.Title}";
-        var dialogResult = await DialogService.Show<ConfirmDelete>(msg, parameters, _dialogOptions).Result;
-        if (dialogResult is not null && !dialogResult.Canceled)
+        var dialogResult = await DialogService.ShowAsync<ConfirmDelete>(msg, parameters, _dialogOptions);
+        if (dialogResult is not null && !dialogResult.Result.IsCanceled)
         {
             await PublicationService.DeletePublicationAsync(publicationDto.Id);
             Snackbar.Add("Publication deleted successfully", Severity.Success);

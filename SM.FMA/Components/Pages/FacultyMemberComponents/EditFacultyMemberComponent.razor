@@ -67,15 +67,17 @@ else
                                       Required="true"
                                       RequiredError="Name is required" />
                     </MudItem>
-                    <MudItem lg="6" md="12" xs="12">
-                        <MudTextField T="string"
-                                      Label="Name"
-                                      Variant="Variant.Outlined"
-                                      Margin="Margin.Dense"
-                                      @bind-Value="facultyMember.NameEn"
-                                      Required="true"
-                                      RequiredError="Name is required" />
-                    </MudItem>
+                   
+                        <MudItem lg="6" md="12" xs="12">
+                            <MudTextField T="string"
+                                          Label="Name"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          @bind-Value="facultyMember.NameEn"
+                                          Required="true"
+                                          RequiredError="Name is required" />
+                        </MudItem>
+                   
                     <MudItem lg="4" md="6" xs="12">
                         <MudTextField T="string"
                                       Label="ÇáÈÑíÏ ÇáÅáßÊÑæäí"
@@ -160,7 +162,9 @@ else
             <CascadingValue Value="facultyMember.Id" Name="FacultyMemberId">
 
                 <MudTabs Elevation="4" Rounded="true" Centered="true" Color="Color.Primary">
-                    <MudTabPanel Text="ÇáÔåÇÏÇÊ">                    </MudTabPanel>
+                    <MudTabPanel Text="ÇáÔåÇÏÇÊ" BadgeData="facultyMember.CertificatesCount" BadgeColor="Color.Error">
+                        <SM.FMA.Components.Pages.CertificateComponents.CertificatesComponent OnCertificateSaved="UpdateCertificatesCount"/>
+                    </MudTabPanel>
                     <MudTabPanel Text="ãäÔæÑÇÊ" BadgeData="facultyMember.PublicationsCount" BadgeColor="Color.Error">
                         <SM.FMA.Components.Pages.PublicationComponents.PublicationsComponent OnPublicationSaved="UpdatePublicationsCount" />
                     </MudTabPanel>
@@ -229,6 +233,19 @@ else
             }
         }
     }
+
+    private async Task UpdateCertificatesCount()
+    {
+        if (facultyMember != null)
+        {
+            var updatedFacultyMember = await FacultyMemberService.GetFacultyMemberAsync(facultyMember.Id);
+            if (updatedFacultyMember != null)
+            {
+                facultyMember.CertificatesCount = updatedFacultyMember.CertificatesCount;
+            }
+        }
+    }
+
     private void SetSex(bool args)
     {
         if (facultyMember == null)

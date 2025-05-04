@@ -22,6 +22,7 @@
         public string SSN { get; set; }                 //رقم الضمان الاجتماعي
         public string BranchName { get; set; }
         public string BankName { get; set; }
+        public int CertificatesCount { get; set; }
         public int PublicationsCount { get; set; }
         public int PapersCount { get; set; }
         public int BooksCount { get; set; }

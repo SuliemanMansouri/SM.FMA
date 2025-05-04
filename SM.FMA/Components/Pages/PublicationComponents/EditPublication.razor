@@ -1,9 +1,9 @@
-﻿@inject IPublicationService PublicationService
-@inject ISnackbar Snackbar
-@using FMA.Data.Enums
+﻿@using FMA.Data.Enums
 @using System.Reflection
 @using System.ComponentModel.DataAnnotations
 @using SM.FMA.Extensions
+@inject IPublicationService PublicationService
+@inject ISnackbar Snackbar
 
 
 @if (PublicationDto == null)
@@ -30,10 +30,20 @@ else
                                     Variant="Variant.Outlined"/>
                             </MudItem>
                             <MudItem lg="6" md="12" xs="12">
-                                <MudTextField T="string" Label="الناشر" @bind-Value="PublicationDto.Publisher" Required="true" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                                <MudTextField T="string" 
+                                    Label="الناشر" 
+                                    @bind-Value="PublicationDto.Publisher" 
+                                    Required="true" 
+                                    Margin="Margin.Dense" 
+                                    Variant="Variant.Outlined" />
                             </MudItem>
                             <MudItem lg="6" md="6" xs="12">
-                                <MudDatePicker Label="تاريخ النشر" @bind-Date="PublicationDto.DatePublished" Required="true" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                                <MudDatePicker 
+                                    Label="تاريخ النشر" 
+                                    @bind-Date="PublicationDto.DatePublished" 
+                                    Required="true" 
+                                    Margin="Margin.Dense" 
+                                    Variant="Variant.Outlined" />
                             </MudItem>
                             <MudItem lg="6" md="6" xs="12">
                                 <MudSelect T="PublicationType" 

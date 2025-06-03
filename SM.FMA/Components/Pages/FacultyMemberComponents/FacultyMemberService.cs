@@ -35,6 +35,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 BranchName = teacher.BranchName,
                 BankName = teacher.BankName,
                 EmployeeId = teacher.EmployeeId,
+                AcademicId = teacher.AcademicId,
                 Publications = new List<Publication>(),
                 Certificates = new List<Certificate>(),
                 FacultyPositions = new List<FacultyPosition>(),
@@ -88,6 +89,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 BranchName = facultyMember.BranchName,
                 BankName = facultyMember.BankName,
                 EmployeeId = facultyMember.EmployeeId,
+                AcademicId = facultyMember.AcademicId,
                 PapersCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Paper),
                 BooksCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Book),
                 PublicationsCount = facultyMember.Publications.Count
@@ -132,6 +134,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 BranchName = facultyMember.BranchName,
                 BankName = facultyMember.BankName,
                 EmployeeId = facultyMember.EmployeeId,
+                AcademicId = facultyMember.AcademicId,
                 PapersCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Paper),
                 BooksCount = facultyMember.Publications.Count(p => p.PublishingType == PublicationType.Book),
                 PublicationsCount = facultyMember.Publications.Count
@@ -162,6 +165,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                     BranchName = f.BranchName,
                     BankName = f.BankName,
                     EmployeeId = f.EmployeeId,
+                    AcademicId = f.AcademicId,
                     PapersCount = f.Publications.Count(p => p.PublishingType == PublicationType.Paper),
                     BooksCount = f.Publications.Count(p => p.PublishingType == PublicationType.Book),
                     PublicationsCount = f.Publications.Count
@@ -193,6 +197,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                     BranchName = f.BranchName,
                     BankName = f.BankName,
                     EmployeeId = f.EmployeeId,
+                    AcademicId = f.AcademicId,
                     PapersCount = f.Publications.Count(p => p.PublishingType == PublicationType.Paper),
                     BooksCount = f.Publications.Count(p => p.PublishingType == PublicationType.Book),
                     PublicationsCount = f.Publications.Count

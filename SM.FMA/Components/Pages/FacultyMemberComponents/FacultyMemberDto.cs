@@ -16,6 +16,7 @@
         public string POB { get; set; }
         public string NID { get; set; }
         public string EmployeeId { get; set; } //رقم الموظف
+        public string AcademicId { get; set; } //رقم الاكاديمي
         public string RegistrationNumber { get; set; }  //رقم القيد
         public string FinancialNumber { get; set; }
         public string IBAN { get; set; }

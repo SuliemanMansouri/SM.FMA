@@ -22,15 +22,14 @@ else
             <MudSpacer />
             <MudButton Color="Color.Primary"
                        Variant="Variant.Filled"
-                       Size="Size.Medium"
                        StartIcon="@Icons.Material.Filled.Add"
-                       OnClick="() => NavigateToUpsertForm()">إضافة</MudButton>
+                       OnClick="() => NavigateToUpsertForm()">جديد</MudButton>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<FacultyMemberDto, object>(x=>x.EmployeeId)">الرقم الوظيفي</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.NameAr)">إسم</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.Email)">بريد إلكتروني</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x=>x.PhoneNumber)">رقم الهاتف</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<FacultyMemberDto, object>(x => x.EmployeeId)">الرقم الوظيفي</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x => x.NameAr)">إسم</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x => x.Email)">بريد إلكتروني</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<FacultyMemberDto, object>(x => x.PhoneNumber)">رقم الهاتف</MudTableSortLabel></MudTh>
             <MudTh>العمليات</MudTh>
         </HeaderContent>
 
@@ -40,16 +39,19 @@ else
             <MudTd DataLabel="Email">@context.Email</MudTd>
             <MudTd DataLabel="Phone Number" Style="direction:ltr">@context.PhoneNumber</MudTd>
             <MudTd>
-                <MudButton Color="Color.Primary" Variant="Variant.Outlined"
-                           OnClick="() => NavigateToUpsertForm(context)">تعديل</MudButton>
-
-                <MudButton Color="Color.Secondary" Variant="Variant.Outlined"
-                           OnClick="()=> DeleteFacultyMember(context)">حذف</MudButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                               Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               OnClick="() => NavigateToUpsertForm(context)">تعديل</MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               Color="Color.Secondary"
+                               Variant="Variant.Filled"
+                               OnClick="()=> DeleteFacultyMember(context)">حذف</MudIconButton>
             </MudTd>
         </RowTemplate>
 
         <PagerContent>
-            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+            <MudTablePager PageSizeOptions="new int[] { 50, 100 }" />
         </PagerContent>
     </MudTable>
 }

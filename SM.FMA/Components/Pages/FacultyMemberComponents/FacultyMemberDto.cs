@@ -1,4 +1,6 @@
-﻿namespace SM.FMA.Components.Pages.FacultyMemberComponents
+﻿using SM.FMA.Data.Enums;
+
+namespace SM.FMA.Components.Pages.FacultyMemberComponents
 {
     public class FacultyMemberDto
     {
@@ -15,6 +17,7 @@
         public DateTime DOB { get; set; }
         public string POB { get; set; }
         public string NID { get; set; }
+        public ContractualDesignation ContractualDesignation { get; set; } = ContractualDesignation.None; //التعيين
         public string EmployeeId { get; set; } //رقم الموظف
         public string AcademicId { get; set; } //رقم الاكاديمي
         public string RegistrationNumber { get; set; }  //رقم القيد

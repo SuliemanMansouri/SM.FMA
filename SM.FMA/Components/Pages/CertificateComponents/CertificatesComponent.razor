@@ -15,25 +15,30 @@ else
     <MudTable Items="certificates" Hover="true" @bind-SelectedItem="selectedCertificate" Breakpoint="Breakpoint.Sm" Dense="true">
         <ToolBarContent>
             <MudSpacer />
-            <MudIconButton Icon="@Icons.Material.Filled.Add"
-                           Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           Size="Size.Small"
-                           OnClick="AddCertificate">إضافة</MudIconButton>
+            <MudButton StartIcon="@Icons.Material.Filled.Add"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="AddCertificate">جديد</MudButton>
         </ToolBarContent>
         <HeaderContent>
             <MudTh>الدرجة العلمية</MudTh>
             <MudTh>المؤسسة المانحة</MudTh>
             <MudTh>تاريخ المنح</MudTh>
-            <MudTh></MudTh>
+            <MudTh>العمليات</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="الدرجة العلمية">@context.Degree</MudTd>
             <MudTd DataLabel="المؤسسة المانحة">@context.Institution</MudTd>
             <MudTd DataLabel="تاريخ المنح">@context.DateAwarded.ToString("dd/MM/yyyy")</MudTd>
             <MudTd>
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="@(() => EditCertificate(context.Id))" />
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" OnClick="@(() => DeleteCertificate(context.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               OnClick="@(() => EditCertificate(context.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               Variant="Variant.Filled"
+                               Color="Color.Error"
+                               OnClick="@(() => DeleteCertificate(context.Id))" />
             </MudTd>
         </RowTemplate>
     </MudTable>
@@ -61,11 +66,11 @@ else
     private void AddCertificate()
     {
         var parameters = new DialogParameters
-            {
-                ["CertificateId"] = null,
-                ["FacultyMemberId"] = FacultyMemberId,
-                ["OnSave"] = EventCallback.Factory.Create(this, OnCertificateSaved)
-            };
+        {
+            ["CertificateId"] = null,
+            ["FacultyMemberId"] = FacultyMemberId,
+            ["OnSave"] = EventCallback.Factory.Create(this, OnCertificateSaved)
+        };
         selectedCertificate = new CertificateDto { FacultyMemberId = FacultyMemberId };
 
         DialogService.ShowAsync<EditCertificate>("إضافة شهادة",
@@ -77,11 +82,11 @@ else
     private async Task EditCertificate(Guid id)
     {
         var parameters = new DialogParameters
-            {
-                ["CertificateId"] = null,
-                ["FacultyMemberId"] = FacultyMemberId,
-                ["OnSave"] = EventCallback.Factory.Create<CertificateDto>(this, OnCertificateSaved)
-            };
+        {
+            ["CertificateId"] = null,
+            ["FacultyMemberId"] = FacultyMemberId,
+            ["OnSave"] = EventCallback.Factory.Create<CertificateDto>(this, OnCertificateSaved)
+        };
         selectedCertificate = new CertificateDto { FacultyMemberId = FacultyMemberId };
         var dialog = await DialogService.ShowAsync<EditCertificate>("تعديل شهادة",
         parameters,
@@ -109,4 +114,4 @@ else
             await OnCertificateSaved.InvokeAsync();
         }
     }
-} 
+}

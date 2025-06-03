@@ -1,5 +1,7 @@
 @page "/FacultyMemberComponents/EditFacultyMember"
 @page "/FacultyMemberComponents/EditFacultyMember/{Id:Guid}"
+@using SM.FMA.Data.Enums
+@using SM.FMA.Extensions
 @inject IFacultyMemberService FacultyMemberService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
@@ -74,18 +76,30 @@ else
                                       Required="true"
                                       RequiredError="Name is required" />
                     </MudItem>
-                   
-                        <MudItem lg="6" md="12" xs="12">
-                            <MudTextField T="string"
-                                          Label="Name"
-                                          Variant="Variant.Outlined"
-                                          Margin="Margin.Dense"
-                                          @bind-Value="facultyMember.NameEn"
-                                          Required="true"
-                                          RequiredError="Name is required" />
-                        </MudItem>
-                   
-                    <MudItem lg="4" md="6" xs="12">
+
+                    <MudItem lg="6" md="12" xs="12">
+                        <MudTextField T="string"
+                                      Label="Name"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      @bind-Value="facultyMember.NameEn"
+                                      Required="true"
+                                      RequiredError="Name is required" />
+                    </MudItem>
+                    <MudItem lg="2" md="4" xs="12">
+                        <MudSelect T="ContractualDesignation"
+                                      Label="ÇáæÕÝ ÇáæÙíÝí"
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      Required="true"
+                                      RequiredError="Department is required">
+                            @foreach (var item in EnumExtensions.GetEnumDisplayNames<ContractualDesignation>())
+                            {
+                                <MudSelectItem Value="@(item.Key)">@item.Value</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem lg="2" md="4" xs="12">
                         <MudTextField T="string"
                                       Label="ÇáÈÑíÏ ÇáÅáßÊÑæäí"
                                       Variant="Variant.Outlined"
@@ -94,7 +108,7 @@ else
                                       Required="true"
                                       RequiredError="Email is required" />
                     </MudItem>
-                    <MudItem lg="2" md="6" xs="12">
+                    <MudItem lg="2" md="4" xs="12">
                         <MudTextField T="string"
                                       Label="ÑÞã ÇáåÇÊÝ"
                                       Variant="Variant.Outlined"
@@ -170,14 +184,14 @@ else
 
                 <MudTabs Elevation="4" Rounded="true" Centered="true" Color="Color.Primary">
                     <MudTabPanel Text="ÇáÔåÇÏÇÊ" BadgeData="facultyMember.CertificatesCount" BadgeColor="Color.Error">
-                        <SM.FMA.Components.Pages.CertificateComponents.CertificatesComponent OnCertificateSaved="UpdateCertificatesCount"/>
+                        <SM.FMA.Components.Pages.CertificateComponents.CertificatesComponent OnCertificateSaved="UpdateCertificatesCount" />
                     </MudTabPanel>
                     <MudTabPanel Text="ãäÔæÑÇÊ" BadgeData="facultyMember.PublicationsCount" BadgeColor="Color.Error">
                         <SM.FMA.Components.Pages.PublicationComponents.PublicationsComponent OnPublicationSaved="UpdatePublicationsCount" />
                     </MudTabPanel>
                     <MudTabPanel Text="ÇáãäÇÕÈ"></MudTabPanel>
                     <MudTabPanel Text="ÇáÏÑÌÇÊ ÇáÚáãíÉ"></MudTabPanel>
-                    <MudTabPanel Text="ÇáÏÑÌÇÊ ÇáæÙíÝíÉ"></MudTabPanel>
+
                 </MudTabs>
 
             </CascadingValue>
@@ -269,4 +283,4 @@ else
             facultyMember.Sex = 'F';
         }
     }
-} 
+}

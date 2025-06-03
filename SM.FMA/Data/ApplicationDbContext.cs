@@ -16,6 +16,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<FacultyMember> FacultyMembers { get; set; }
     public DbSet<FacultyPosition> FacultyPositions { get; set; }
     public DbSet<FacultyRank> FacultyRanks { get; set; }
-    public DbSet<FacultyTitle> FacultyTitles { get; set; }
     public DbSet<Publication> Publications { get; set; }
 }

@@ -11,18 +11,21 @@ namespace SM.FMA.Extensions
                 .Cast<T>()
                 .ToDictionary(
                     e => e,
-                    e => e.GetType()
-                          .GetField(e.ToString())
-                          .GetCustomAttribute<DisplayAttribute>()?.GetName() ?? e.ToString());
+                    e =>
+                    {
+                        var fieldInfo = e.GetType().GetField(e.ToString());
+                        if (fieldInfo == null) return e.ToString();
+                        var displayAttribute = fieldInfo.GetCustomAttribute<DisplayAttribute>();
+                        return displayAttribute?.GetName() ?? e.ToString();
+                    });
         }
 
         public static string GetDisplayName(this Enum enumValue)
         {
-            return enumValue.GetType()
-                .GetMember(enumValue.ToString())
-                .First()
-                .GetCustomAttribute<DisplayAttribute>()
-                ?.GetName() ?? enumValue.ToString();
+            var memberInfo = enumValue.GetType().GetMember(enumValue.ToString()).FirstOrDefault();
+            if (memberInfo == null) return enumValue.ToString();
+            var displayAttribute = memberInfo.GetCustomAttribute<DisplayAttribute>();
+            return displayAttribute?.GetName() ?? enumValue.ToString();
         }
     }
 }

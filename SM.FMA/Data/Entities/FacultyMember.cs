@@ -1,4 +1,5 @@
 ﻿using MudBlazor.Extensions;
+using SM.FMA.Data.Enums;
 
 namespace SM.FMA.Data.Entities
 {
@@ -29,6 +30,7 @@ namespace SM.FMA.Data.Entities
         public DateTime DOB { get; set; }
         public string POB { get; set; }
         public string NID { get; set; }
+        public ContractualDesignation ContractualDesignation { get; set; } = ContractualDesignation.None; //التعيين
         public string EmployeeId { get; set; } //رقم الموظف
         public string AcademicId { get; set; } //رقم الأكاديمي
         public string RegistrationNumber { get; set; }  //رقم القيد
@@ -40,10 +42,9 @@ namespace SM.FMA.Data.Entities
 
         public DateTime? DateOfJoining { get; set; }
         public List<Certificate> Certificates { get; set; } = [];   //certificates history
-        public List<FacultyRank> FacultyRanks { get; set; } = [];   //promotion history
-        public List<FacultyTitle> FacultyTitles { get; set; } = []; //titles history
-        public List<Publication> Publications { get; set; } = [];   //publications history
-        public List<FacultyPosition> FacultyPositions { get; set; } = [];  //positions history
+        public List<FacultyRank> FacultyRanks { get; set; } = [];   //promotion history الترقيات العلمية
+        public List<Publication> Publications { get; set; } = [];   //publications history المنشورات العلمية
+        public List<FacultyPosition> FacultyPositions { get; set; } = [];  //positions history المناصب العلمية
 
 
     }

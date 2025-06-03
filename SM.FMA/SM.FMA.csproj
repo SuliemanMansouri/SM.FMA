@@ -7,6 +7,17 @@
     <UserSecretsId>aspnet-SM.FMA-a23bfd1e-6d2f-4d10-94ba-91b9f5938fee</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Api\**" />
+    <Compile Remove="Data\Migrations\**" />
+    <Content Remove="Api\**" />
+    <Content Remove="Data\Migrations\**" />
+    <EmbeddedResource Remove="Api\**" />
+    <EmbeddedResource Remove="Data\Migrations\**" />
+    <None Remove="Api\**" />
+    <None Remove="Data\Migrations\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="ErikEJ.EntityFrameworkCore.DgmlBuilder" Version="6.0.0" />
@@ -23,8 +34,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Api\" />
-    <Folder Include="Data\Migrations\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

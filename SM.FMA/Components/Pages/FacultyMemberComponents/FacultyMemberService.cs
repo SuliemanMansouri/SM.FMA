@@ -28,6 +28,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 DOB = teacher.DOB,
                 POB = teacher.POB,
                 NID = teacher.NID,
+                ContractualDesignation = teacher.ContractualDesignation,
                 RegistrationNumber = teacher.RegistrationNumber,
                 FinancialNumber = teacher.FinancialNumber,
                 IBAN = teacher.IBAN,
@@ -39,8 +40,8 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 Publications = new List<Publication>(),
                 Certificates = new List<Certificate>(),
                 FacultyPositions = new List<FacultyPosition>(),
-                FacultyRanks = new List<FacultyRank>(),
-                FacultyTitles = new List<FacultyTitle>()
+                FacultyRanks = new List<FacultyRank>()
+                
             };
 
             var existingMember = await _dbContext.FacultyMembers.Include(x => x.Publications)
@@ -59,6 +60,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 existingMember.DOB = teacher.DOB;
                 existingMember.POB = teacher.POB;
                 existingMember.NID = teacher.NID;
+                existingMember.ContractualDesignation = teacher.ContractualDesignation;
                 existingMember.RegistrationNumber = teacher.RegistrationNumber;
                 existingMember.FinancialNumber = teacher.FinancialNumber;
                 existingMember.IBAN = teacher.IBAN;
@@ -82,6 +84,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 DOB = facultyMember.DOB,
                 POB = facultyMember.POB,
                 NID = facultyMember.NID,
+                ContractualDesignation = facultyMember.ContractualDesignation,
                 RegistrationNumber = facultyMember.RegistrationNumber,
                 FinancialNumber = facultyMember.FinancialNumber,
                 IBAN = facultyMember.IBAN,
@@ -127,6 +130,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                 DOB = facultyMember.DOB,
                 POB = facultyMember.POB,
                 NID = facultyMember.NID,
+                ContractualDesignation = facultyMember.ContractualDesignation,
                 RegistrationNumber = facultyMember.RegistrationNumber,
                 FinancialNumber = facultyMember.FinancialNumber,
                 IBAN = facultyMember.IBAN,
@@ -158,6 +162,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                     DOB = f.DOB,
                     POB = f.POB,
                     NID = f.NID,
+                    ContractualDesignation = f.ContractualDesignation,
                     RegistrationNumber = f.RegistrationNumber,
                     FinancialNumber = f.FinancialNumber,
                     IBAN = f.IBAN,
@@ -190,6 +195,7 @@ namespace SM.FMA.Components.Pages.FacultyMemberComponents
                     DOB = f.DOB,
                     POB = f.POB,
                     NID = f.NID,
+                    ContractualDesignation = f.ContractualDesignation,
                     RegistrationNumber = f.RegistrationNumber,
                     FinancialNumber = f.FinancialNumber,
                     IBAN = f.IBAN,

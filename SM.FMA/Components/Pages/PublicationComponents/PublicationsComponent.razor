@@ -18,17 +18,16 @@ else
     <MudTable Items="publications" Hover="true" @bind-SelectedItem="selectedPublication" Dense="true">
         <ToolBarContent>
             <MudSpacer />
-            <MudIconButton Icon="@Icons.Material.Filled.Add"
+            <MudButton StartIcon="@Icons.Material.Filled.Add"
                            Variant="Variant.Filled"
                            Color="Color.Primary"
-                           Size="Size.Small"
-                           OnClick="OpenAddDialog">جديد</MudIconButton>
+                           OnClick="OpenAddDialog">جديد</MudButton>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<PublicationDto, object>(x=> x.DatePublished ?? DateTime.MinValue)">تاريخ النشر</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x=>x.Title)">العنوان</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x=>x.Publisher)">الناشر</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x=>x.PublishingType)">نوع المنشور</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<PublicationDto, object>(x => x.DatePublished ?? DateTime.MinValue)">تاريخ النشر</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x => x.Title)">العنوان</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x => x.Publisher)">الناشر</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<PublicationDto, object>(x => x.PublishingType)">نوع المنشور</MudTableSortLabel></MudTh>
             <MudTh>العمليات</MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -37,8 +36,14 @@ else
             <MudTd DataLabel="الناشر">@context.Publisher</MudTd>
             <MudTd DataLabel="نوع المنشور">@context.PublishingType.GetDisplayName()</MudTd>
             <MudTd DataLabel="العمليات">
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => OpenEditDialog(context)">تعديل</MudIconButton>
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="() => DeletePublication(context)">حذف</MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               OnClick="() => OpenEditDialog(context)">تعديل</MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               Variant="Variant.Filled"
+                               Color="Color.Error"
+                               OnClick="() => DeletePublication(context)">حذف</MudIconButton>
             </MudTd>
         </RowTemplate>
     </MudTable>
@@ -68,11 +73,11 @@ else
     private void OpenAddDialog()
     {
         var parameters = new DialogParameters
-            {
-                ["PublicationId"] = null,
-                ["FacultyMemberId"] = FacultyMemberId,
-                ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
-            };
+        {
+            ["PublicationId"] = null,
+            ["FacultyMemberId"] = FacultyMemberId,
+            ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
+        };
         selectedPublication = new PublicationDto { FacultyMemberId = FacultyMemberId };
         DialogService.ShowAsync<EditPublication>("إضافة منشور",
         parameters,
@@ -83,11 +88,11 @@ else
     {
         selectedPublication = publication;
         var parameters = new DialogParameters
-            {
-                ["PublicationId"] = publication.Id,
-                ["FacultyMemberId"] = publication.FacultyMemberId,
-                ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
-            };
+        {
+            ["PublicationId"] = publication.Id,
+            ["FacultyMemberId"] = publication.FacultyMemberId,
+            ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
+        };
 
         DialogService.ShowAsync<EditPublication>("تعديل منشور",
         parameters,

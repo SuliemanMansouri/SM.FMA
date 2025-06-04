@@ -1,5 +1,27 @@
-﻿<h3>ContractEditComponent</h3>
+﻿@using SM.FMA.Data.Entities
+@inject IContractService ContractService
 
+@if()
 @code {
+    [Parameter] public Guid FacultyMemberId { get; set; }
+    [Parameter] public Guid ContractId { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+    [CascadingParameter] public required IMudDialogInstance MudDialog{ get; set; }
+
+    private Contract? Contract { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(ContractId== Guid.Empty)
+        {
+            Contract = new Contract();
+            Contract.FacultyMemberId = FacultyMemberId;
+        }
+        else
+        {
+            Contract = await ContractService.GetFacultyMemberContractAsync(ContractId);
+        }
+    }
+
 
 }

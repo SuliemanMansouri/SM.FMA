@@ -45,7 +45,8 @@ namespace SM.FMA.Data.Entities
         public List<FacultyRank> FacultyRanks { get; set; } = [];   //promotion history الترقيات العلمية
         public List<Publication> Publications { get; set; } = [];   //publications history المنشورات العلمية
         public List<FacultyPosition> FacultyPositions { get; set; } = [];  //positions history المناصب العلمية
-
+        public List<Contract> Contracts { get; set; } = [];
+        public List<TeachingLoad> TeachingLoads { get; set; } = [];
 
     }
 }

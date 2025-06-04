@@ -17,4 +17,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<FacultyPosition> FacultyPositions { get; set; }
     public DbSet<FacultyRank> FacultyRanks { get; set; }
     public DbSet<Publication> Publications { get; set; }
+    public DbSet<Contract> Contracts { get; set; }
+    public DbSet<TeachingLoad> TeachingLoads { get; set; }
 }

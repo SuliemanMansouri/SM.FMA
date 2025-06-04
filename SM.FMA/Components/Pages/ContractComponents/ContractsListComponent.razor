@@ -1,0 +1,77 @@
+﻿@using MudBlazor
+@using SM.FMA.Data.Entities
+@inject IContractService ContractService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+@if (publications == null)
+{
+    <div class="d-flex justify-center align-center ma-auto">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <MudTable Items="Contracts">
+
+    </MudTable>
+    <MudTable Items="Contracts" Hover="true" @bind-SelectedItem="SelectedContract" Dense="true">
+        <ToolBarContent>
+            <MudSpacer />
+            <MudButton StartIcon="@Icons.Material.Filled.Add"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="OpenAddDialog">جديد</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Contract, object>(x => x.Date)">تاريخ العقد</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Contract, object>(x => x.ScanUri)">العنوان</MudTableSortLabel></MudTh>
+            <MudTh>العمليات</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="تاريخ العقد">@context.Date.ToString("yyyy/MM/dd")</MudTd>
+            <MudTd DataLabel="موقع صورة العقد">@context.ScanUri</MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           OnClick="() => OpenEditContractDialog(context)">تعديل</MudIconButton>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                           Variant="Variant.Filled"
+                           Color="Color.Error"
+                           OnClick="() => DeleteContract(context)">حذف</MudIconButton>
+            <MudIconButton Icon="@Icons.Material.Filled.Scanner"
+                           Variant="Variant.Filled"
+                           Color="Color.Info"
+                           OnClick="()=> ShowContractScan(context.Id)">عرض العقد</MudIconButton>
+
+        </RowTemplate>
+    </MudTable>
+
+}
+@code {
+    [CascadingParameter(Name = "FacultyMemberId")] public Guid FacultyMemberId { get; set; }
+    [Parameter] public EventCallback OnContractSaved { get; set; }
+
+    private List<Contract> Contracts { get; set; } = [];
+    private Contract SelectedContract { get; set; } = new();
+
+    private void OpenAddDialog(MouseEventArgs args)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void OpenEditContractDialog(Contract contract)
+    {
+
+    }
+
+    private async Task DeleteContract(Contract contract)
+    {
+
+    }
+
+    private async Task ShowContractScan(Guid id)
+    {
+
+    }
+}

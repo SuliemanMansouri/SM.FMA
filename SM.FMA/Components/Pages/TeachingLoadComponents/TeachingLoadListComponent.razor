@@ -1,0 +1,6 @@
+﻿<h3>TeachingLoadListComponent</h3>
+
+@code {
+    [CascadingParameter(Name = "FacultyMemberId")] public Guid FacultyMemberId { get; set; }
+    [Parameter] public EventCallback OnPublicationSaved { get; set; }
+}

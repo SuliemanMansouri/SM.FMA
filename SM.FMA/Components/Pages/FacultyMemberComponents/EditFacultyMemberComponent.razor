@@ -183,6 +183,12 @@ else
             <CascadingValue Value="facultyMember.Id" Name="FacultyMemberId">
 
                 <MudTabs Elevation="4" Rounded="true" Centered="true" Color="Color.Primary">
+                    <MudTabPanel Text="ÇáÚÞæÏ" >
+                        <SM.FMA.Components.Pages.ContractComponents.ContractsListComponent />
+                    </MudTabPanel>
+                   @*  <MudTabPanel Text="ÇáÃÚÈÇÁ ÇáÏÑÇÓíÉ">
+                        <SM.FMA.Components.Pages.TeachingLoadComponents.TeachingLoadListComponent />
+                    </MudTabPanel> *@
                     <MudTabPanel Text="ÇáÔåÇÏÇÊ" BadgeData="facultyMember.CertificatesCount" BadgeColor="Color.Error">
                         <SM.FMA.Components.Pages.CertificateComponents.CertificatesComponent OnCertificateSaved="UpdateCertificatesCount" />
                     </MudTabPanel>

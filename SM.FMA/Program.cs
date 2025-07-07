@@ -10,6 +10,7 @@ using SM.FMA.Data;
 using SM.FMA.Components.Pages.CertificateComponents;
 using Microsoft.AspNetCore.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
+using SM.FMA.Components.Pages.ContractComponents;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddScoped<IContractService, ContractService>();
 
 builder.Services.AddAuthentication(options =>
     {

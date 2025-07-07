@@ -20,15 +20,25 @@ public class ContractService(IDbContextFactory<ApplicationDbContext> dbContextFa
     public async Task<Contract> GetFacultyMemberContractAsync(Guid contractId)
     {
         var db = dbContextFactory.CreateDbContext();
-        var contracts = await db.Contracts.FirstOrDefaultAsync(x=>x.Id == contractId);
-        return contracts;
+        var contract = await db.Contracts.FirstOrDefaultAsync(x => x.Id == contractId);
+        if (contract == null)
+            throw new InvalidOperationException($"Contract with ID {contractId} not found.");
+        return contract;
     }
 
     public async Task<List<Contract>> GetFacultyMemberContractsAsync(Guid facultyMemberId)
     {
-        var db = dbContextFactory.CreateDbContext();
-        var contracts = await db.Contracts.Where(x=>x.FacultyMemberId == facultyMemberId).ToListAsync();
-        return contracts;
+        try
+        {
+            var db = dbContextFactory.CreateDbContext();
+            var contracts = await db.Contracts.Where(x => x.FacultyMemberId == facultyMemberId).ToListAsync();
+            return contracts;
+        }
+        catch (Exception ex)
+        {
+            // Optionally log the exception here
+            throw new ApplicationException($"Error retrieving contracts for FacultyMemberId: {facultyMemberId}", ex);
+        }
     }
 
     public async Task<Contract> UpsertContractAsync(Contract contract)

@@ -1,27 +1,92 @@
-﻿@using SM.FMA.Data.Entities
+﻿@using SM.FMA.Components.Pages.FacultyMemberComponents
+@using SM.FMA.Data.Entities
+@using ContractEntity = SM.FMA.Data.Entities.Contract;
 @inject IContractService ContractService
+@inject IFacultyMemberService FacultyMemberService
 
-@if()
+@using MudBlazor
+
+@if (selectedContract != null)
+{
+    <MudDialog>
+        <DialogContent>
+            <MudForm @ref="_form">
+                <MudDatePicker @bind-Value="selectedContract!.Date" Label="Date" Required="true" />
+                <MudTextField @bind-Value="selectedContract.ScanUri" Label="Scan URI" Disabled="true" />
+                <InputFile id="inputContract" @OnClick="OnFileChanged" hidden multiple />
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Save" Color="Color.Primary" Variant="Variant.Filled">Save</MudButton>
+            <MudButton OnClick="Cancel" Color="Color.Secondary" Variant="Variant.Text">Cancel</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
 @code {
+    const int MaxFileSize = 10 * 1024 * 1024; // 10 MB
+
     [Parameter] public Guid FacultyMemberId { get; set; }
     [Parameter] public Guid ContractId { get; set; }
     [Parameter] public EventCallback OnSave { get; set; }
-    [CascadingParameter] public required IMudDialogInstance MudDialog{ get; set; }
+    [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
-    private Contract? Contract { get; set; }
+    private ContractEntity? selectedContract { get; set; }
+    private MudForm? _form;
+    private IBrowserFile? uploadedFile;
 
     protected override async Task OnInitializedAsync()
     {
-        if(ContractId== Guid.Empty)
+        if (ContractId == Guid.Empty)
         {
-            Contract = new Contract();
-            Contract.FacultyMemberId = FacultyMemberId;
+            selectedContract = new Contract
+            {
+                FacultyMemberId = FacultyMemberId,
+                ScanUri = string.Empty,
+                FacultyMember = null!
+            };
         }
         else
         {
-            Contract = await ContractService.GetFacultyMemberContractAsync(ContractId);
+            selectedContract = await ContractService.GetFacultyMemberContractAsync(ContractId);
         }
     }
 
+    private async Task Save()
+    {
+        if (_form is not null)
+        {
+            await _form.Validate();
+            if (!_form.IsValid)
+                return;
+        }
+        await ContractService.UpsertContractAsync(selectedContract!);
+        if (OnSave.HasDelegate)
+            await OnSave.InvokeAsync();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
 
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    @code {
+        private async Task OnFileChanged(InputFileChangeEventArgs e)
+        {
+            uploadedFile = e.File;
+            var facultyMember = await FacultyMemberService.GetFacultyMemberAsync(FacultyMemberId);
+            if (uploadedFile != null && uploadedFile.ContentType == "application/pdf" && uploadedFile.Size < MaxFileSize)
+            {
+                var fileName = $"contract_{facultyMember.AcademicId}_{Guid.NewGuid()}.pdf";
+                var filePath = Path.Combine("wwwroot", "contracts", fileName);
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await uploadedFile.OpenReadStream(10 * 1024 * 1024).CopyToAsync(stream);
+                }
+                selectedContract!.ScanUri = $"/FacultyContracts/{fileName}";
+            }
+        }
+    }
 }

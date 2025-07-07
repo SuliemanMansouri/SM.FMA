@@ -1,6 +1,5 @@
 ﻿@using SM.FMA.Components.Pages.FacultyMemberComponents
 @using SM.FMA.Data.Entities
-@using ContractEntity = SM.FMA.Data.Entities.Contract;
 @inject IContractService ContractService
 @inject IFacultyMemberService FacultyMemberService
 
@@ -13,7 +12,15 @@
             <MudForm @ref="_form">
                 <MudDatePicker @bind-Value="selectedContract!.Date" Label="Date" Required="true" />
                 <MudTextField @bind-Value="selectedContract.ScanUri" Label="Scan URI" Disabled="true" />
-                <InputFile id="inputContract" @OnClick="OnFileChanged" hidden multiple />
+                <MudItem >
+                <InputFile id="inputContract" OnChange="OnFileChanged" hidden multiple />
+                <MudButton HtmlTag="label"
+                    Color="Color.Info"
+                    StartIcon="@Icons.Material.Filled.CloudUpload"
+                    for="inputContract">
+                    تحميل عقد
+                </MudButton>
+                </MudItem>
             </MudForm>
         </DialogContent>
         <DialogActions>
@@ -26,12 +33,13 @@
 @code {
     const int MaxFileSize = 10 * 1024 * 1024; // 10 MB
 
+
     [Parameter] public Guid FacultyMemberId { get; set; }
     [Parameter] public Guid ContractId { get; set; }
     [Parameter] public EventCallback OnSave { get; set; }
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
-    private ContractEntity? selectedContract { get; set; }
+    private Contract? selectedContract { get; set; }
     private MudForm? _form;
     private IBrowserFile? uploadedFile;
 
@@ -68,25 +76,36 @@
 
     private void Cancel()
     {
+        //check if there is an uploaded file and delete it if necessary
+        if (uploadedFile != null)
+        {
+            var filePath = Path.Combine("wwwroot", "contracts", selectedContract!.ScanUri.Split('/').Last());
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
         MudDialog.Cancel();
     }
 
-    @code {
-        private async Task OnFileChanged(InputFileChangeEventArgs e)
+
+
+    private async Task OnFileChanged(InputFileChangeEventArgs e)
+    {
+        uploadedFile = e.File;
+        var facultyMember = await FacultyMemberService.GetFacultyMemberAsync(FacultyMemberId);
+        if (uploadedFile != null && uploadedFile.ContentType == "application/pdf" && uploadedFile.Size < MaxFileSize)
         {
-            uploadedFile = e.File;
-            var facultyMember = await FacultyMemberService.GetFacultyMemberAsync(FacultyMemberId);
-            if (uploadedFile != null && uploadedFile.ContentType == "application/pdf" && uploadedFile.Size < MaxFileSize)
+            var fileName = $"contract_{facultyMember.AcademicId}_{Guid.NewGuid()}.pdf";
+            var filePath = Path.Combine("wwwroot", "contracts", fileName);
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                var fileName = $"contract_{facultyMember.AcademicId}_{Guid.NewGuid()}.pdf";
-                var filePath = Path.Combine("wwwroot", "contracts", fileName);
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await uploadedFile.OpenReadStream(10 * 1024 * 1024).CopyToAsync(stream);
-                }
-                selectedContract!.ScanUri = $"/FacultyContracts/{fileName}";
+                await uploadedFile.OpenReadStream(10 * 1024 * 1024).CopyToAsync(stream);
             }
+            selectedContract!.ScanUri = $"/FacultyContracts/{fileName}";
+           
         }
     }
+
 }

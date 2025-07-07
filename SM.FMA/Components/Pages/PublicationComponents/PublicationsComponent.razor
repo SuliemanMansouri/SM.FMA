@@ -120,8 +120,9 @@ else
         var _dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
 
         var msg = $"سيتم حذف المنشور: {publicationDto.Title}";
-        var dialogResult = await DialogService.ShowAsync<ConfirmDelete>(msg, parameters, _dialogOptions);
-        if (dialogResult is not null && !dialogResult.Result.IsCanceled)
+        var dialog = await DialogService.ShowAsync<ConfirmDelete>(msg, parameters, _dialogOptions);
+        var result = await dialog.Result;
+        if (result is not null && !result.Canceled)
         {
             await PublicationService.DeletePublicationAsync(publicationDto.Id);
             Snackbar.Add("Publication deleted successfully", Severity.Success);

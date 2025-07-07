@@ -106,7 +106,8 @@ else
         var _dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
         var msg = $"سيتم حذف الشهادة: {selectedCertificate.Degree}";
         var dialog = await DialogService.ShowAsync<ConfirmDelete>(msg, parameters, _dialogOptions);
-        if (dialog is not null && !dialog.Result.IsCanceled)
+        var result = await dialog.Result;
+        if (result is not null && !result.Canceled)
         {
             await CertificateService.DeleteCertificateAsync(id);
             Snackbar.Add("تم الحذف بنجاح", Severity.Success);

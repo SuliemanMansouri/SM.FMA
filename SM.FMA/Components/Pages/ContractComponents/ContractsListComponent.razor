@@ -4,6 +4,7 @@
 @inject IContractService ContractService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@rendermode InteractiveServer
 
 @if (Contracts == null)
 {
@@ -120,16 +121,12 @@ else
     {
         var parameters = new DialogParameters
         {
-            { "ContentText", $"هل أنت متأكد أنك تريد حذف العقد بتاريخ {contract.Date?.ToString("yyyy/MM/dd")}؟" },
-            { "ButtonText", "حذف" },
+            { "ContentText", $"هل أنت متأكد من حذف العقد؟" },
+            { "ConfirmationText", "حذف" },
+            { "CancelText", "إلغاء" },
             { "Color", Color.Error }
         };
-        var dialogOptions = new DialogOptions
-        {
-            CloseButton = true,
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.Small
-        };
+       
         var _dialogOptions = new DialogOptions
         {
             CloseButton = true,
@@ -137,7 +134,7 @@ else
             MaxWidth = MaxWidth.Small,
             BackdropClick = false
         };
-        var msg = $"هل أنت متأكد أنك تريد حذف العقد بتاريخ {contract.Date?.ToString("yyyy/MM/dd")}؟";
+        var msg = $"هل أنت متأكد من حذف العقد";
 
         var dialog = await DialogService.ShowAsync<ConfirmDelete>(msg, parameters, _dialogOptions);
         var result = await dialog.Result;

@@ -99,8 +99,9 @@ else
         var _dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
 
         var msg = $"سيتم حذف عضو هيئة التدريس: {facultyMemberDto.NameAr}";
-        var result = await DialogService.ShowAsync<ConfirmDelete>(msg, parameters, _dialogOptions);
-        if (!result.Result.IsCanceled)
+        var dialog = await DialogService.ShowAsync<ConfirmDelete>(msg, parameters, _dialogOptions);
+        var result = await dialog.Result;
+        if (result != null && !result.Canceled)
         {
             await TeacherService.DeleteFacultyMemberAsync(facultyMemberDto.Id);
             teachers = (await TeacherService.GetFacultyMembersAsync()).ToArray();

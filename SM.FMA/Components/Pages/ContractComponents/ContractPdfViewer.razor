@@ -1,0 +1,22 @@
+@using MudBlazor
+
+@if (!string.IsNullOrWhiteSpace(ScanUri))
+{
+    <MudDialog>
+        <DialogContent>
+            <object data="@ScanUri" type="application/pdf" width="100%" height="600px">
+                <p>لا يمكن عرض الملف. <a href="@ScanUri" target="_blank">اضغط هنا لتحميل الملف</a>.</p>
+            </object>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Close" Color="Color.Primary">إغلاق</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
+@code {
+    [Parameter] public string? ScanUri { get; set; }
+    [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
+
+    private void Close() => MudDialog.Close();
+}

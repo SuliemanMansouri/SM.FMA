@@ -88,24 +88,23 @@
         MudDialog.Cancel();
     }
 
-
-
     private async Task OnFileChanged(InputFileChangeEventArgs e)
     {
         uploadedFile = e.File;
         var facultyMember = await FacultyMemberService.GetFacultyMemberAsync(FacultyMemberId);
         if (uploadedFile != null && uploadedFile.ContentType == "application/pdf" && uploadedFile.Size < MaxFileSize)
         {
-            var fileName = $"contract_{facultyMember.AcademicId}_{Guid.NewGuid()}.pdf";
-            var filePath = Path.Combine("wwwroot", "contracts", fileName);
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+            var academicId = facultyMember.AcademicId;
+            var year = selectedContract?.Date?.Year ?? DateTime.Now.Year;
+            var fileName = $"contract_{academicId}_{year}.pdf";
+            var folderPath = Path.Combine("wwwroot", "contracts", academicId);
+            Directory.CreateDirectory(folderPath);
+            var filePath = Path.Combine(folderPath, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                await uploadedFile.OpenReadStream(10 * 1024 * 1024).CopyToAsync(stream);
+                await uploadedFile.OpenReadStream(MaxFileSize).CopyToAsync(stream);
             }
-            selectedContract!.ScanUri = $"/FacultyContracts/{fileName}";
-           
+            selectedContract!.ScanUri = $"/contracts/{academicId}/{fileName}";
         }
     }
-
 }

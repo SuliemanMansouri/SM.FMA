@@ -14,7 +14,6 @@
 }
 else
 {
-    
     <MudTable Items="Contracts" Hover="true" @bind-SelectedItem="SelectedContract" Dense="true">
         <ToolBarContent>
             <MudSpacer />
@@ -161,8 +160,10 @@ else
             Snackbar.Add("لا يوجد ملف لهذا العقد", Severity.Warning);
             return;
         }
-        SelectedContract = contract;
-        
-        await Task.CompletedTask; // Simulate async operation if needed
+        var parameters = new DialogParameters
+        {
+            ["ScanUri"] = contract.ScanUri
+        };
+        await DialogService.ShowAsync<ContractPdfViewer>("عرض ملف العقد", parameters, _dialogOptions);
     }
 }

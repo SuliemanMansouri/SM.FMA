@@ -38,10 +38,14 @@ else
                            Variant="Variant.Filled"
                            Color="Color.Error"
                            OnClick="() => DeleteContract(context)">حذف</MudIconButton>
-            <MudIconButton Icon="@Icons.Material.Filled.Scanner"
-                           Variant="Variant.Filled"
-                           Color="Color.Info"
-                           OnClick="()=> ShowContractScan(context.Id)">عرض العقد</MudIconButton>
+            @if (!string.IsNullOrEmpty(context.ScanUri))
+            {
+
+                <MudIconButton Icon="@Icons.Material.Filled.RemoveRedEye"
+                               Variant="Variant.Filled"
+                               Color="Color.Info"
+                               OnClick="()=> ShowContractScan(context.Id)">عرض العقد</MudIconButton>
+            }
 
         </RowTemplate>
     </MudTable>
@@ -50,7 +54,7 @@ else
 @code {
     [CascadingParameter(Name = "FacultyMemberId")] public Guid FacultyMemberId { get; set; }
     [Parameter] public EventCallback OnContractSaved { get; set; }
-    
+
     private readonly DialogOptions _dialogOptions = new DialogOptions
     {
         MaxWidth = MaxWidth.Large,
@@ -62,7 +66,7 @@ else
     private List<Contract> Contracts { get; set; } = [];
 
     private Contract SelectedContract { get; set; } = new()
-    {   
+    {
         ScanUri = string.Empty, // Initialize required property 'ScanUri'
         FacultyMemberId = Guid.NewGuid() // Initialize with a default value
     };
@@ -106,7 +110,8 @@ else
         var parameters = new DialogParameters
         {
             ["ContractId"] = contract.Id,
-            ["FacultyMemberId"] = FacultyMemberId
+            ["FacultyMemberId"] = FacultyMemberId,
+            ["OnSave"] = EventCallback.Factory.Create(this, LoadContracts)
         };
 
         DialogService.ShowAsync<ContractEditComponent>(
@@ -125,7 +130,7 @@ else
             { "CancelText", "إلغاء" },
             { "Color", Color.Error }
         };
-       
+
         var _dialogOptions = new DialogOptions
         {
             CloseButton = true,
@@ -164,6 +169,6 @@ else
         {
             ["ScanUri"] = contract.ScanUri
         };
-        await DialogService.ShowAsync<ContractPdfViewer>("عرض ملف العقد", parameters, _dialogOptions);
+        await DialogService.ShowAsync<PdfViewer>("عرض ملف العقد", parameters, _dialogOptions);
     }
 }

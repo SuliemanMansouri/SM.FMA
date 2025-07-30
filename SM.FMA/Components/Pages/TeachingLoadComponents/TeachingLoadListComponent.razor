@@ -1,6 +1,143 @@
-﻿<h3>TeachingLoadListComponent</h3>
+﻿@using MudBlazor
+@using SM.FMA.Data.Entities
+@using SM.FMA.Components.Pages.Dialogs
+@inject ITeachingLoadService TeachingLoadService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+@if (teachingLoads == null)
+{
+    <div class="d-flex justify-center align-center ma-auto">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <MudTable Items="teachingLoads" Hover="true" @bind-SelectedItem="selectedTeachingLoad" Dense="true">
+        <ToolBarContent>
+            <MudSpacer />
+            <MudButton StartIcon="@Icons.Material.Filled.Add"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="OpenAddDialog">جديد</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<TeachingLoad, object>(x => x.AcademicYear)">العام الأكاديمي</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<TeachingLoad, object>(x => x.Semester)">الفصل</MudTableSortLabel></MudTh>
+            <MudTh>الملف</MudTh>
+            <MudTh>العمليات</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="العام الأكاديمي">@context.AcademicYear</MudTd>
+            <MudTd DataLabel="الفصل">@context.Semester.ToString()</MudTd>
+            <MudTd DataLabel="الملف">
+            </MudTd>
+            <MudTd DataLabel="العمليات">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               OnClick="() => OpenEditDialog(context)">تعديل</MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               Variant="Variant.Filled"
+                               Color="Color.Error"
+                               OnClick="() => DeleteTeachingLoad(context)">حذف</MudIconButton>
+                @if (!string.IsNullOrEmpty(context.ScanUri))
+                {
+                    
+                    <MudIconButton Icon="@Icons.Material.Filled.RemoveRedEye"
+                    Variant="Variant.Filled" 
+                    Color="Color.Info" 
+                    OnClick="() => ShowFileDialog(context.ScanUri)">عرض في نافذة</MudIconButton>
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
 
 @code {
     [CascadingParameter(Name = "FacultyMemberId")] public Guid FacultyMemberId { get; set; }
-    [Parameter] public EventCallback OnPublicationSaved { get; set; }
+    [Parameter] public EventCallback OnTeachingLoadSaved { get; set; }
+
+    private readonly DialogOptions _dialogOptions = new DialogOptions
+    {
+        MaxWidth = MaxWidth.Large,
+        FullWidth = true,
+        CloseButton = true,
+        CloseOnEscapeKey = true
+    };
+
+    private List<TeachingLoad> teachingLoads = new();
+    private TeachingLoad selectedTeachingLoad = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTeachingLoads();
+    }
+
+    private async Task LoadTeachingLoads()
+    {
+        teachingLoads = (await TeachingLoadService.GetFacultyMemberTeachingLoadsAsync(FacultyMemberId)).ToList();
+    }
+
+    private void OpenAddDialog()
+    {
+        var parameters = new DialogParameters
+        {
+            ["TeachingLoadId"] = Guid.Empty,
+            ["FacultyMemberId"] = FacultyMemberId,
+            ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
+        };
+        selectedTeachingLoad = new TeachingLoad { FacultyMemberId = FacultyMemberId };
+        DialogService.ShowAsync<TeachingLoadEditComponent>("إضافة عبء تدريس",
+        parameters,
+        new DialogOptions { MaxWidth = MaxWidth.Small });
+    }
+
+    private void OpenEditDialog(TeachingLoad teachingLoad)
+    {
+        selectedTeachingLoad = teachingLoad;
+        var parameters = new DialogParameters
+        {
+            ["TeachingLoadId"] = teachingLoad.Id,
+            ["FacultyMemberId"] = teachingLoad.FacultyMemberId,
+            ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
+        };
+        DialogService.ShowAsync<TeachingLoadEditComponent>("تعديل عبء تدريس",
+        parameters,
+        new DialogOptions { MaxWidth = MaxWidth.Small });
+    }
+
+    private async Task OnDialogSave()
+    {
+        await LoadTeachingLoads();
+        await OnTeachingLoadSaved.InvokeAsync();
+    }
+
+    private async Task DeleteTeachingLoad(TeachingLoad teachingLoad)
+    {
+        var parameters = new DialogParameters
+        {
+            { "ContentText", "هل أنت متأكد من عملية الحذف؟" },
+            { "ConfirmationText", "حذف" },
+            { "CancelText", "إلغاء" },
+            { "Color", Color.Error }
+        };
+        var _dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
+        var msg = $"سيتم حذف عبء التدريس للعام: {teachingLoad.AcademicYear}";
+        var dialog = await DialogService.ShowAsync<ConfirmDelete>(msg, parameters, _dialogOptions);
+        var result = await dialog.Result;
+        if (result is not null && !result.Canceled)
+        {
+            await TeachingLoadService.DeleteTeachingLoadAsync(teachingLoad.Id);
+            Snackbar.Add("Teaching load deleted successfully", Severity.Success);
+            await LoadTeachingLoads();
+            await OnTeachingLoadSaved.InvokeAsync();
+        }
+    }
+
+    private async Task ShowFileDialog(string scanUri)
+    {
+        var parameters = new DialogParameters { ["ScanUri"] = scanUri };
+        await DialogService.ShowAsync<PdfViewer>("عرض الملف", parameters, _dialogOptions);
+    }
 }

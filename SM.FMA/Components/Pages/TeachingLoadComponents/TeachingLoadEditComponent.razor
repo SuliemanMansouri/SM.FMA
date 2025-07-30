@@ -1,5 +1,117 @@
 ﻿<h3>TeachingLoadEditComponent</h3>
 
-@code {
+@using SM.FMA.Data.Entities
+@using SM.FMA.Data.Enums
+@using SM.FMA.Components.Pages.FacultyMemberComponents
+@inject IFacultyMemberService FacultyMemberService
+@inject ITeachingLoadService TeachingLoadService
 
+@using MudBlazor
+
+@if (selectedTeachingLoad != null)
+{
+    <MudDialog>
+        <DialogContent>
+            <MudForm @ref="_form">
+                <MudTextField @bind-Value="selectedTeachingLoad.AcademicYear" Label="Academic Year" Required="true" />
+                <MudSelect T="SM.FMA.Data.Enums.Semester" @bind-Value="selectedTeachingLoad.Semester" Label="Semester" Required="true">
+                    <MudSelectItem Value="SM.FMA.Data.Enums.Semester.Fall">خريف</MudSelectItem>
+                    <MudSelectItem Value="SM.FMA.Data.Enums.Semester.Spring">ربيع</MudSelectItem>
+                    <MudSelectItem Value="SM.FMA.Data.Enums.Semester.Summer">صيف</MudSelectItem>
+                </MudSelect>
+                <MudTextField @bind-Value="selectedTeachingLoad.ScanUri" Label="Scan URI" Disabled="true" />
+                <MudItem>
+                    <InputFile id="inputTeachingLoad" OnChange="OnFileChanged" hidden multiple />
+                    <MudButton HtmlTag="label"
+                        Color="Color.Info"
+                        StartIcon="@Icons.Material.Filled.CloudUpload"
+                        for="inputTeachingLoad">
+                        تحميل عبء التدريس
+                    </MudButton>
+                </MudItem>
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Save" Color="Color.Primary" Variant="Variant.Filled">Save</MudButton>
+            <MudButton OnClick="Cancel" Color="Color.Secondary" Variant="Variant.Text">Cancel</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
+@code {
+    const int MaxFileSize = 10 * 1024 * 1024; // 10 MB
+
+    [Parameter] public Guid FacultyMemberId { get; set; }
+    [Parameter] public Guid TeachingLoadId { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+    [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
+
+    private TeachingLoad? selectedTeachingLoad { get; set; }
+    private MudForm? _form;
+    private IBrowserFile? uploadedFile;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TeachingLoadId == Guid.Empty)
+        {
+            selectedTeachingLoad = new TeachingLoad
+            {
+                FacultyMemberId = FacultyMemberId,
+                ScanUri = string.Empty,
+                FacultyMember = null!
+            };
+        }
+        else
+        {
+            // TODO: Get TeachingLoad by Id from service
+        }
+    }
+
+    private async Task Save()
+    {
+        if (_form is not null)
+        {
+            await _form.Validate();
+            if (!_form.IsValid)
+                return;
+        }
+        // TODO: Upsert TeachingLoad via service
+        await TeachingLoadService.UpsertTeachingLoadAsync(selectedTeachingLoad!);
+        if (OnSave.HasDelegate)
+            await OnSave.InvokeAsync();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        if (uploadedFile != null)
+        {
+            var filePath = Path.Combine("wwwroot", "teachingloads", selectedTeachingLoad!.ScanUri.Split('/').Last());
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+        MudDialog.Cancel();
+    }
+
+    private async Task OnFileChanged(InputFileChangeEventArgs e)
+    {
+        uploadedFile = e.File;
+        var facultyMember = await FacultyMemberService.GetFacultyMemberAsync(FacultyMemberId);
+        if (uploadedFile != null && uploadedFile.ContentType == "application/pdf" && uploadedFile.Size < MaxFileSize)
+        {
+            var academicId = facultyMember.AcademicId;
+            var year = selectedTeachingLoad?.AcademicYear ?? DateTime.Now.Year.ToString();
+            var fileName = $"teachingload_{academicId}_{year}.pdf";
+            var folderPath = Path.Combine("wwwroot", "teachingloads", academicId);
+            Directory.CreateDirectory(folderPath);
+            var filePath = Path.Combine(folderPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await uploadedFile.OpenReadStream(MaxFileSize).CopyToAsync(stream);
+            }
+            selectedTeachingLoad!.ScanUri = $"/teachingloads/{academicId}/{fileName}";
+        }
+    }
 }

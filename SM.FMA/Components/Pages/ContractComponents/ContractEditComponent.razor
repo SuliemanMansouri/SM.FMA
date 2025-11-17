@@ -1,5 +1,5 @@
 ﻿@using SM.FMA.Components.Pages.FacultyMemberComponents
-@using SM.FMA.Data.Entities
+@using SM.FMA.Components.Pages.ContractComponents
 @inject IContractService ContractService
 @inject IFacultyMemberService FacultyMemberService
 
@@ -33,13 +33,12 @@
 @code {
     const int MaxFileSize = 10 * 1024 * 1024; // 10 MB
 
-
     [Parameter] public Guid FacultyMemberId { get; set; }
     [Parameter] public Guid ContractId { get; set; }
     [Parameter] public EventCallback OnSave { get; set; }
     [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
 
-    private Contract? selectedContract { get; set; }
+    private ContractDto? selectedContract { get; set; }
     private MudForm? _form;
     private IBrowserFile? uploadedFile;
 
@@ -47,11 +46,10 @@
     {
         if (ContractId == Guid.Empty)
         {
-            selectedContract = new Contract
+            selectedContract = new ContractDto
             {
                 FacultyMemberId = FacultyMemberId,
-                ScanUri = string.Empty,
-                FacultyMember = null!
+                ScanUri = string.Empty
             };
         }
         else

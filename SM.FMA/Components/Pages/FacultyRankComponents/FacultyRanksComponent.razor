@@ -1,0 +1,111 @@
+@using MudBlazor
+@using SM.FMA.Components.Pages.FacultyRankComponents
+@using SM.FMA.Components.Pages.Dialogs
+@inject IFacultyRankService FacultyRankService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+@if (_ranks == null)
+{
+    <div class="d-flex justify-center align-center ma-auto">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <MudTable Items="_ranks" Hover="true" @bind-SelectedItem="_selected" Dense="true">
+        <ToolBarContent>
+            <MudSpacer />
+            <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddDialog">ÃœÌœ</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<FacultyRankDto, object>(x => x.PromotionDate ?? DateOnly.MinValue)"> «—ÌŒ «· —ﬁÌ…</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<FacultyRankDto, object>(x => x.RankName)">«·— »…</MudTableSortLabel></MudTh>
+            <MudTh>«·„⁄«ÌÌ—</MudTh>
+            <MudTh>«·⁄„·Ì« </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel=" «—ÌŒ «· —ﬁÌ…">@context.PromotionDate?.ToString("yyyy/MM/dd")</MudTd>
+            <MudTd DataLabel="«·— »…">@context.RankName</MudTd>
+            <MudTd DataLabel="«·„⁄«ÌÌ—">@context.CriteriaMet</MudTd>
+            <MudTd DataLabel="«·⁄„·Ì« ">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenEditDialog(context)"> ⁄œÌ·</MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteRank(context)">Õ–›</MudIconButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    [CascadingParameter(Name = "FacultyMemberId")] public Guid FacultyMemberId { get; set; }
+    [Parameter] public EventCallback OnRankSaved { get; set; }
+
+    private List<FacultyRankDto> _ranks = new();
+    private FacultyRankDto _selected = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRanks();
+    }
+
+    private async Task LoadRanks()
+    {
+        _ranks = (await FacultyRankService.GetFacultyMemberRanksAsync(FacultyMemberId)).ToList();
+    }
+
+    private void OpenAddDialog()
+    {
+        var parameters = new DialogParameters
+        {
+            ["FacultyRankId"] = Guid.Empty,
+            ["FacultyMemberId"] = FacultyMemberId,
+            ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
+        };
+        _selected = new FacultyRankDto { FacultyMemberId = FacultyMemberId };
+        DialogService.ShowAsync<EditFacultyRank>("≈÷«›… — »…",
+            parameters,
+            new DialogOptions { MaxWidth = MaxWidth.Small });
+    }
+
+    private void OpenEditDialog(FacultyRankDto rank)
+    {
+        _selected = rank;
+        var parameters = new DialogParameters
+        {
+            ["FacultyRankId"] = rank.Id,
+            ["FacultyMemberId"] = rank.FacultyMemberId,
+            ["OnSave"] = EventCallback.Factory.Create(this, OnDialogSave)
+        };
+        DialogService.ShowAsync<EditFacultyRank>(" ⁄œÌ· — »…",
+            parameters,
+            new DialogOptions { MaxWidth = MaxWidth.Small });
+    }
+
+    private async Task OnDialogSave()
+    {
+        await LoadRanks();
+        await OnRankSaved.InvokeAsync();
+    }
+
+    private async Task DeleteRank(FacultyRankDto rank)
+    {
+        var parameters = new DialogParameters
+        {
+            { "ContentText", "Â· √‰  „ √ﬂœ „‰ ⁄„·Ì… «·Õ–›ø" },
+            { "ConfirmationText", "Õ–›" },
+            { "CancelText", "≈·€«¡" },
+            { "Color", Color.Error }
+        };
+        var dialogOptions = new DialogOptions { MaxWidth = MaxWidth.ExtraLarge, BackdropClick = false };
+        var msg = $"”Ì „ Õ–› «·— »…: {rank.RankName}";
+        var dialog = await DialogService.ShowAsync<ConfirmDelete>(msg, parameters, dialogOptions);
+        var result = await dialog.Result;
+        if (result is not null && !result.Canceled)
+        {
+            await FacultyRankService.DeleteFacultyRankAsync(rank.Id);
+            Snackbar.Add("Rank deleted successfully", Severity.Success);
+            await LoadRanks();
+            await OnRankSaved.InvokeAsync();
+        }
+    }
+}

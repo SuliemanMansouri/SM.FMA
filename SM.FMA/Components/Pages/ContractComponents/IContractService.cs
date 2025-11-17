@@ -1,11 +1,11 @@
-﻿using SM.FMA.Data.Entities;
+﻿using SM.FMA.Components.Pages.ContractComponents;
 
 namespace SM.FMA.Components.Pages.ContractComponents;
 
 public interface IContractService
 {
-    Task<List<Contract>> GetFacultyMemberContractsAsync(Guid facultyMemberId);
-    Task<Contract> GetFacultyMemberContractAsync(Guid contractId);
-    Task<Contract> UpsertContractAsync(Contract contract);
+    Task<List<ContractDto>> GetFacultyMemberContractsAsync(Guid facultyMemberId);
+    Task<ContractDto> GetFacultyMemberContractAsync(Guid contractId);
+    Task<ContractDto> UpsertContractAsync(ContractDto contractDto);
     Task DeleteContract(Guid contractId);
 }

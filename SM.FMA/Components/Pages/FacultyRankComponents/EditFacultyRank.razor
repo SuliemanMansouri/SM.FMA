@@ -1,0 +1,71 @@
+@using MudBlazor
+@using SM.FMA.Components.Pages.FacultyRankComponents
+@inject IFacultyRankService FacultyRankService
+
+@if (_rank != null)
+{
+    <MudDialog>
+        <DialogContent>
+            <MudForm @ref="_form">
+                <MudTextField @bind-Value="_rank.RankName" Label="«·— »…" Required="true" />
+                <MudDatePicker Label=" «—ÌŒ «· —ﬁÌ…" @bind-Date="_promotionDate" Required="true" />
+                <MudTextField @bind-Value="_rank.CriteriaMet" Label="«·„⁄«ÌÌ— („›’Ê·… »›Ê«’·)" Lines="3" />
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Save" Color="Color.Primary" Variant="Variant.Filled">Õ›Ÿ</MudButton>
+            <MudButton OnClick="Cancel" Color="Color.Secondary" Variant="Variant.Text">≈·€«¡</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
+@code {
+    [Parameter] public Guid FacultyMemberId { get; set; }
+    [Parameter] public Guid FacultyRankId { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+    [CascadingParameter] public required IMudDialogInstance MudDialog { get; set; }
+
+    private FacultyRankDto? _rank;
+    private MudForm? _form;
+    private DateTime? _promotionDate
+    {
+        get => _rank?.PromotionDate?.ToDateTime(TimeOnly.MinValue);
+        set
+        {
+            if (_rank != null && value.HasValue)
+                _rank.PromotionDate = DateOnly.FromDateTime(value.Value);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (FacultyRankId == Guid.Empty)
+        {
+            _rank = new FacultyRankDto
+            {
+                FacultyMemberId = FacultyMemberId,
+                PromotionDate = DateOnly.FromDateTime(DateTime.UtcNow)
+            };
+        }
+        else
+        {
+            _rank = await FacultyRankService.GetFacultyRankByIdAsync(FacultyRankId);
+        }
+    }
+
+    private async Task Save()
+    {
+        if (_form is not null)
+        {
+            await _form.Validate();
+            if (!_form.IsValid)
+                return;
+        }
+        await FacultyRankService.UpsertFacultyRankAsync(_rank!);
+        if (OnSave.HasDelegate)
+            await OnSave.InvokeAsync();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

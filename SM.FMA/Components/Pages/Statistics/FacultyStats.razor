@@ -1,0 +1,161 @@
+@page "/statistics/faculty"
+@using MudBlazor
+@using Microsoft.EntityFrameworkCore
+@using SM.FMA.Data
+@using SM.FMA.Data.Entities
+@using SM.FMA.Data.Enums
+@using SM.FMA.Extensions
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<div class="pa-4">
+    <MudPaper Class="pa-4 mb-4">
+        <MudGrid Spacing="3">
+            <MudItem xs="12" sm="6" md="4">
+                <MudSelect T="ContractualDesignation?" Label="«· ⁄ÌÌ‰" @bind-Value="_selectedDesignation" @bind-Value:after="OnFilterChanged" Clearable="true">
+                    @foreach (var d in _designations)
+                    {
+                        <MudSelectItem Value="@d">@d.GetDisplayName()</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudSelect T="string" Label="«·— »… «·⁄·„Ì…" @bind-Value="_selectedRank" @bind-Value:after="OnFilterChanged" Clearable="true">
+                    @foreach (var r in _availableRanks)
+                    {
+                        <MudSelectItem Value="@r">@r</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4" Class="d-flex align-center">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ClearFilters">„”Õ «·„—‘Õ« </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    @if (_loading)
+    {
+        <div class="d-flex justify-center align-center ma-auto"><MudProgressCircular Indeterminate="true" /></div>
+    }
+    else
+    {
+        <MudGrid Spacing="3">
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Class="pa-3">
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6">⁄œœ «·–ﬂÊ—</MudText>
+                        <MudText Typo="Typo.h4" Color="Color.Primary">@_maleCount</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Class="pa-3">
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6">⁄œœ «·≈‰«À</MudText>
+                        <MudText Typo="Typo.h4" Color="Color.Secondary">@_femaleCount</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Class="pa-3">
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6">«·≈Ã„«·Ì</MudText>
+                        <MudText Typo="Typo.h4">@_total</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Class="pa-3">
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6">‰”»… «·–ﬂÊ—</MudText>
+                        <MudText Typo="Typo.h4">@(_total == 0 ? 0 : (int)Math.Round((double)_maleCount * 100 / _total))%</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+        <MudPaper Class="mt-6 pa-4">
+            <MudText Typo="Typo.h6" Class="mb-2"> Ê“Ì⁄ «·Ã‰”</MudText>
+            <MudChart ChartType="ChartType.Pie"
+                      Labels="@_labels"
+                      Datasets="@_datasets">
+            </MudChart>
+        </MudPaper>
+    }
+</div>
+
+@code {
+    private bool _loading = true;
+    private int _maleCount;
+    private int _femaleCount;
+    private int _total;
+
+    private ContractualDesignation? _selectedDesignation;
+    private string? _selectedRank;
+
+    private readonly ContractualDesignation[] _designations = Enum.GetValues<ContractualDesignation>();
+    private List<string> _availableRanks = new();
+
+    private string[] _labels = new[] { "–ﬂÊ—", "≈‰«À" };
+    private double[][] _datasets = Array.Empty<double[]>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAvailableRanks();
+        await LoadStats();
+    }
+
+    private async Task LoadAvailableRanks()
+    {
+        using var db = DbFactory.CreateDbContext();
+        _availableRanks = await db.FacultyRanks.Select(fr => fr.RankName).Distinct().OrderBy(n => n).ToListAsync();
+    }
+
+    private async Task LoadStats()
+    {
+        _loading = true;
+        StateHasChanged();
+        try
+        {
+            using var db = DbFactory.CreateDbContext();
+            var query = db.FacultyMembers.AsQueryable();
+
+            if (_selectedDesignation is not null)
+            {
+                query = query.Where(f => f.ContractualDesignation == _selectedDesignation);
+            }
+
+            if (!string.IsNullOrWhiteSpace(_selectedRank))
+            {
+                query = query.Include(f => f.FacultyRanks)
+                             .Where(f => f.FacultyRanks.Any(r => r.RankName == _selectedRank));
+            }
+
+            var list = await query.Select(f => new { f.Sex }).ToListAsync();
+            _maleCount = list.Count(x => x.Sex == 'M' || x.Sex == 'm');
+            _femaleCount = list.Count(x => x.Sex == 'F' || x.Sex == 'f');
+            _total = _maleCount + _femaleCount;
+
+            _datasets = new[]
+            {
+                new double[] { _maleCount, _femaleCount }
+            };
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnFilterChanged()
+    {
+        await LoadStats();
+    }
+
+    private async Task ClearFilters()
+    {
+        _selectedDesignation = null;
+        _selectedRank = null;
+        await LoadStats();
+    }
+}

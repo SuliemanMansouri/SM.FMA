@@ -1,6 +1,4 @@
-﻿<h3>TeachingLoadEditComponent</h3>
-
-@using SM.FMA.Data.Entities
+﻿@using SM.FMA.Data.Entities
 @using SM.FMA.Data.Enums
 @using SM.FMA.Components.Pages.FacultyMemberComponents
 @inject IFacultyMemberService FacultyMemberService
@@ -49,7 +47,7 @@
     private TeachingLoad? selectedTeachingLoad { get; set; }
     private MudForm? _form;
     private IBrowserFile? uploadedFile;
-
+    private string PageHeaderText = "";
     protected override async Task OnInitializedAsync()
     {
         if (TeachingLoadId == Guid.Empty)
@@ -64,6 +62,8 @@
         else
         {
             // TODO: Get TeachingLoad by Id from service
+            PageHeaderText = "تعديل بيانات العبء";
+            selectedTeachingLoad = await TeachingLoadService.GetTeachingLoadAsync(TeachingLoadId);
         }
     }
 

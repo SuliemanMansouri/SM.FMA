@@ -1,5 +1,6 @@
 ﻿@using MudBlazor
 @using SM.FMA.Components.Pages.Dialogs
+@using SM.FMA.Components.Pages.ContractComponents
 @using SM.FMA.Data.Entities
 @inject IContractService ContractService
 @inject IDialogService DialogService
@@ -23,8 +24,8 @@ else
                        OnClick="OpenAddDialog">جديد</MudButton>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Contract, object>(x => x.Date)">تاريخ العقد</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Contract, object>(x => x.ScanUri)">العنوان</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ContractDto, object>(x => x.Date)">تاريخ العقد</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<ContractDto, object>(x => x.ScanUri)">العنوان</MudTableSortLabel></MudTh>
             <MudTh>العمليات</MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -63,9 +64,9 @@ else
         CloseOnEscapeKey = true
     };
 
-    private List<Contract> Contracts { get; set; } = [];
+    private List<ContractDto> Contracts { get; set; } = [];
 
-    private Contract SelectedContract { get; set; } = new()
+    private ContractDto SelectedContract { get; set; } = new()
     {
         ScanUri = string.Empty, // Initialize required property 'ScanUri'
         FacultyMemberId = Guid.NewGuid() // Initialize with a default value
@@ -88,7 +89,7 @@ else
     }
     private void OpenAddDialog(MouseEventArgs args)
     {
-        SelectedContract = new Contract { FacultyMemberId = FacultyMemberId, ScanUri = string.Empty };
+        SelectedContract = new ContractDto { FacultyMemberId = FacultyMemberId, ScanUri = string.Empty };
 
         var parameters = new DialogParameters
         {
@@ -103,7 +104,7 @@ else
         );
     }
 
-    private void OpenEditContractDialog(Contract contract)
+    private void OpenEditContractDialog(ContractDto contract)
     {
         SelectedContract = contract;
 
@@ -121,7 +122,7 @@ else
         );
     }
 
-    private async Task DeleteContract(Contract contract)
+    private async Task DeleteContract(ContractDto contract)
     {
         var parameters = new DialogParameters
         {
